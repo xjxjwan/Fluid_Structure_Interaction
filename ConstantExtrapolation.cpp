@@ -10,7 +10,7 @@ void constantExtrapolation(std::vector<std::vector<std::array<double, 4>>>& u, c
     const std::vector<std::vector<int>>& interface_location,
     const int nCells, const double dx, const double dy, const bool phi_positive) {
 
-    // Remove all values not adjacent to interface in the ghost region
+    // TODO: Remove all values not adjacent to interface in the ghost region?
     for (int i = 0; i < nCells + 4; i++) {
         for (int j = 0; j < nCells + 4; j++) {
             double cur_phi = phi[i][j];
@@ -60,7 +60,7 @@ void updateU(std::vector<std::vector<std::array<double, 4>>>& u, const std::vect
     const std::array cur_u = u[i][j];
     std::array<double, 4> u_x, u_y;
 
-    // choose the neighbours closer to the interface
+    // TODO: choose the neighbours closer to the interface?
     if (cur_phi > 0) {
         u_x = phi[i - 1][j] < phi[i + 1][j] ? u[i - 1][j] : u[i + 1][j];
         u_y = phi[i][j - 1] < phi[i][j + 1] ? u[i][j - 1] : u[i][j + 1];

@@ -42,23 +42,23 @@ std::array<double, 4> func_bilinearIntp(const std::vector<std::vector<std::array
     return u_intp;
 }
 
-// TODO: check the notes
+
 std::vector<std::array<double, 4>> func_calInitialStates(const std::vector<std::vector<std::array<double, 4>>>& u1,
     const std::vector<std::vector<std::array<double, 4>>>& u2, double cur_phi, const std::vector<double>& normal_vector,
     const std::vector<double>& cur_pos, const int dx, const int dy, const double x0, const double y0) {
 
     // get a point along the normal vector on the interface
-    const double interface_pos_x = cur_pos[0] - cur_phi * normal_vector[0];  // NOTE: direction of normal vector
+    const double interface_pos_x = cur_pos[0] - cur_phi * normal_vector[0];  // TODO: direction of normal vector
     const double interface_pos_y = cur_pos[1] - cur_phi * normal_vector[1];
 
     // get two interpolation points, one in each material
-    double pos1_x = interface_pos_x - 1.5 * dx * normal_vector[0];  // NOTE: minus to material 1, plus to material 2?
+    double pos1_x = interface_pos_x - 1.5 * dx * normal_vector[0];  // TODO: minus to material 1, plus to material 2?
     double pos1_y = interface_pos_y - 1.5 * dy * normal_vector[1];
     double pos2_x = interface_pos_x + 1.5 * dx * normal_vector[0];
     double pos2_y = interface_pos_y + 1.5 * dy * normal_vector[1];
 
     // get two initial states for the Riemann problem by bilinear interpolation
-    // NOTE: u1 and u2, are the four surrounding grids in the same material?
+    // TODO: u1 and u2, are the four surrounding grids in the same material?
     const double pos1_i = (pos1_x - x0) / dx + 1.5, pos1_j = (pos1_y - y0) / dy + 1.5;
     const std::array<double, 4> u1_intp = func_bilinearIntp(u1, pos1_i, pos1_j, dx, dy, x0, y0);
 
