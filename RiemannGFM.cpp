@@ -48,7 +48,7 @@ std::vector<std::array<double, 4>> func_calInitialStates(const std::vector<std::
     const std::vector<double>& cur_pos, const int dx, const int dy, const double x0, const double y0) {
 
     // get a point along the normal vector on the interface
-    const double interface_pos_x = cur_pos[0] - cur_phi * normal_vector[0];  // TODO: direction of normal vector
+    const double interface_pos_x = cur_pos[0] - cur_phi * normal_vector[0];  // TODO: direction of normal vector?
     const double interface_pos_y = cur_pos[1] - cur_phi * normal_vector[1];
 
     // get two interpolation points, one in each material
