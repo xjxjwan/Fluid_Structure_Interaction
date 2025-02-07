@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cassert>
 
 #include "AuxiliaryFunctions.H"
 #include "CalFlux.H"
@@ -59,8 +60,8 @@ int main() {
             // phi_i = y - 0.5;
 
             // transform from primitive to conservative
-            u1[i][j] = prim2cons(u_ij, gama_1);
-            u2[i][j] = prim2cons(u_ij, gama_2);
+            u1[i][j] = prim2cons(u_ij, gama_1, p_inf_1);
+            u2[i][j] = prim2cons(u_ij, gama_2, p_inf_2);
             phi[i][j] = phi_i;
         }
     }
@@ -96,15 +97,18 @@ int main() {
 
         // locate interface
         std::vector interface_location(nCells + 4, std::vector<int>(nCells + 4));
+        bool found = false;
         for (int i = 2; i < nCells + 2; i++) {
             for (int j = 2; j < nCells + 2; j++) {
                 double cur_phi = phi[i][j];
                 double phi_up = phi[i][j + 1], phi_down = phi[i][j - 1], phi_right = phi[i + 1][j], phi_left = phi[i - 1][j];
                 if (cur_phi * phi_up < 0 or cur_phi * phi_down < 0 or cur_phi * phi_right < 0 or cur_phi * phi_left < 0) {
                     interface_location[i][j] = 1;
+                    found = true;
                 }
             }
         }
+        if (!found) {assert(false);}  // debug: no interface
 
 
         //**********************************************************************************//
@@ -121,37 +125,37 @@ int main() {
                 // left material (phi < 0)
                 if (interface_location[i][j] == 1 && phi[i][j] > 0) {  // ghost cells adjacent to the interface
                     std::array temp_u1_prim = func_solveRiemannProblem(u1, u2, phi, i, j, dx, dy, x0, y0, gama_1, gama_2, p_inf_1, p_inf_2, epsilon);
-                    u1[i][j] = prim2cons(temp_u1_prim, gama_1);
+                    u1[i][j] = prim2cons(temp_u1_prim, gama_1, p_inf_1);
                 }
                 // right material (phi > 0)
                 if (interface_location[i][j] == 1 && phi[i][j] < 0) {  // ghost cells adjacent to the interface
                     std::array temp_u2_prim = func_solveRiemannProblem(u1, u2, phi, i, j, dx, dy, x0, y0, gama_1, gama_2, p_inf_1, p_inf_2, epsilon);
-                    u2[i][j] = prim2cons(temp_u2_prim, gama_2);
+                    u2[i][j] = prim2cons(temp_u2_prim, gama_2, p_inf_2);
                 }
             }
         }
-        // constant extrapolation
-        constantExtrapolation(u1, phi, interface_location, nCells, dx, dy, true);  // ghost fluid region phi > 0, phi_positive = true
-        constantExtrapolation(u2, phi, interface_location, nCells, dx, dy, false);  // ghost fluid region phi < 0, phi_positive = false
-
+        // // constant extrapolation
+        // constantExtrapolation(u1, phi, interface_location, nCells, dx, dy, true);  // ghost fluid region phi > 0, phi_positive = true
+        // constantExtrapolation(u2, phi, interface_location, nCells, dx, dy, false);  // ghost fluid region phi < 0, phi_positive = false
 
         // compute time step
         double dt = computeTimeStep(u1, u2, C, dx, dy, gama_1, gama_2, p_inf_1, p_inf_2);
         t = t + dt;
+        std::cout << t << std::endl;
 
 
         //**********************************************************************************//
         // update level set function
         for (int i = 2; i < nCells + 2; i++) {
-            for (int j = 0; j < nCells + 2; j++) {
+            for (int j = 2; j < nCells + 2; j++) {
                 std::array<double, 4> temp_u{};
-                double temp_gama;
+                double temp_gama, temp_p_inf;
                 if (phi[i][j] < 0) {  // material 1
-                    temp_u = u1[i][j], temp_gama = gama_1;
+                    temp_u = u1[i][j], temp_gama = gama_1, temp_p_inf = p_inf_1;
                 } else {  // material 2
-                    temp_u = u2[i][j], temp_gama = gama_2;
+                    temp_u = u2[i][j], temp_gama = gama_2, temp_p_inf = p_inf_2;
                 }
-                std::array<double, 4> temp_u_prim = cons2prim(temp_u, temp_gama);
+                std::array<double, 4> temp_u_prim = cons2prim(temp_u, temp_gama, temp_p_inf);
                 double vx_i = temp_u_prim[1], vy_i = temp_u_prim[2];
                 double phiBar_ij = levelSetUpdate(phi, i, j, vx_i, vy_i, dx, dy, dt);
                 phiPlus1[i][j] = phiBar_ij;
@@ -183,18 +187,18 @@ int main() {
         setBoundaryCondition(u2BarL, nCells); setBoundaryCondition(u2BarR, nCells);
 
         // // debug
-        // bool judgeL = std::isnan(uBarL[0][0][0]);
-        // bool judgeR = std::isnan(uBarR[0][0][0]);
+        // bool judgeL = std::isnan(u1BarL[0][0][0]);
+        // bool judgeR = std::isnan(u1BarR[0][0][0]);
 
         // half-time-step update in x-direction
         for (int i = 0; i < nCells + 4; i++) {
             for (int j = 0; j < nCells + 4; j++) {
 
                 // update x-direction
-                std::vector<std::array<double, 4>> u1BarUpdateX_ij = halfTimeStepUpdateX(u1BarL[i][j], u1BarR[i][j], dx, dt, gama_1);
+                std::vector<std::array<double, 4>> u1BarUpdateX_ij = halfTimeStepUpdateX(u1BarL[i][j], u1BarR[i][j], dx, dt, gama_1, p_inf_1);
                 u1BarLUpdate[i][j] = u1BarUpdateX_ij[0];
                 u1BarRUpdate[i][j] = u1BarUpdateX_ij[1];
-                std::vector<std::array<double, 4>> u2BarUpdateX_ij = halfTimeStepUpdateX(u2BarL[i][j], u2BarR[i][j], dx, dt, gama_2);
+                std::vector<std::array<double, 4>> u2BarUpdateX_ij = halfTimeStepUpdateX(u2BarL[i][j], u2BarR[i][j], dx, dt, gama_2, p_inf_2);
                 u2BarLUpdate[i][j] = u2BarUpdateX_ij[0];
                 u2BarRUpdate[i][j] = u2BarUpdateX_ij[1];
 
@@ -202,15 +206,15 @@ int main() {
         }
 
         // // debug
-        // if (judgeL != std::isnan(uBarLUpdate[0][0][0])) {assert(false);}
-        // if (judgeR != std::isnan(uBarRUpdate[0][0][0])) {assert(false);}
+        // if (judgeL != std::isnan(u1BarLUpdate[0][0][0])) {assert(false);}
+        // if (judgeR != std::isnan(u1BarRUpdate[0][0][0])) {assert(false);}
 
         // calculate boundary fluxes in x-direction
         // flux_i对应的是u_i的右边界
         for (int i = 0; i < nCells + 3; i++) {
             for (int j = 0; j < nCells + 3; j++) {
-                flux1X_SLIC[i][j] = getFluxX(u1BarRUpdate[i][j], u1BarLUpdate[i + 1][j], dx, dt, gama_1);
-                flux2X_SLIC[i][j] = getFluxX(u2BarRUpdate[i][j], u2BarLUpdate[i + 1][j], dx, dt, gama_2);
+                flux1X_SLIC[i][j] = getFluxX(u1BarRUpdate[i][j], u1BarLUpdate[i + 1][j], dx, dt, gama_1, p_inf_1);
+                flux2X_SLIC[i][j] = getFluxX(u2BarRUpdate[i][j], u2BarLUpdate[i + 1][j], dx, dt, gama_2, p_inf_2);
             }
         }
 
@@ -255,10 +259,10 @@ int main() {
         for (int i = 0; i < nCells + 4; i++) {
             for (int j = 0; j < nCells + 4; j++) {
                 // update y-direction
-                std::vector<std::array<double, 4>> u1BarUpdateY_ij = halfTimeStepUpdateY(u1BarD[i][j], u1BarU[i][j], dy, dt, gama_1);
+                std::vector<std::array<double, 4>> u1BarUpdateY_ij = halfTimeStepUpdateY(u1BarD[i][j], u1BarU[i][j], dy, dt, gama_1, p_inf_1);
                 u1BarDUpdate[i][j] = u1BarUpdateY_ij[0];
                 u1BarUUpdate[i][j] = u1BarUpdateY_ij[1];
-                std::vector<std::array<double, 4>> u2BarUpdateY_ij = halfTimeStepUpdateY(u2BarD[i][j], u2BarU[i][j], dy, dt, gama_2);
+                std::vector<std::array<double, 4>> u2BarUpdateY_ij = halfTimeStepUpdateY(u2BarD[i][j], u2BarU[i][j], dy, dt, gama_2, p_inf_2);
                 u2BarDUpdate[i][j] = u2BarUpdateY_ij[0];
                 u2BarUUpdate[i][j] = u2BarUpdateY_ij[1];
             }
@@ -268,8 +272,8 @@ int main() {
         // flux_i对应的是u_i的右边界
         for (int i = 0; i < nCells + 3; i++) {
             for (int j = 0; j < nCells + 3; j++) {
-                flux1Y_SLIC[i][j] = getFluxY(u1BarUUpdate[i][j], u1BarDUpdate[i][j + 1], dy, dt, gama_1);
-                flux2Y_SLIC[i][j] = getFluxY(u2BarUUpdate[i][j], u2BarDUpdate[i][j + 1], dy, dt, gama_2);
+                flux1Y_SLIC[i][j] = getFluxY(u1BarUUpdate[i][j], u1BarDUpdate[i][j + 1], dy, dt, gama_1, p_inf_1);
+                flux2Y_SLIC[i][j] = getFluxY(u2BarUUpdate[i][j], u2BarDUpdate[i][j + 1], dy, dt, gama_2, p_inf_2);
             }
         }
 
@@ -302,8 +306,8 @@ int main() {
     u2_prim.resize(nCells + 4, std::vector<std::array<double, 4>>(nCells + 4));
     for (int i = 0; i < nCells + 4; i++) {
         for (int j = 0; j < nCells + 4; j++) {
-            u1_prim[i][j] = cons2prim(u1[i][j], gama_1);
-            u2_prim[i][j] = cons2prim(u2[i][j], gama_2);
+            u1_prim[i][j] = cons2prim(u1[i][j], gama_1, p_inf_1);
+            u2_prim[i][j] = cons2prim(u2[i][j], gama_2, p_inf_2);
         }
     }
 

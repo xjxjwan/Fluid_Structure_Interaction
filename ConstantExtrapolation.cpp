@@ -73,7 +73,7 @@ void updateU(std::vector<std::vector<std::array<double, 4>>>& u, const std::vect
     const std::vector<double> normal_vector = func_calNormalVector(phi, i, j, dx, dy);
     const std::array<double, 4> u_hat = solveConstantExtp(u_x, u_y, normal_vector, dx, dy);
 
-    // TODO: when should we update? smaller magnitude? four elements seperately?
+    // TODO: when should we update? smaller magnitude? four elements separately?
     // update ghost fluid region function
     if (std::abs(u_hat[0]) < std::abs(cur_u[0])) {u[i][j][0] = u_hat[0];}
     if (std::abs(u_hat[1]) < std::abs(cur_u[1])) {u[i][j][1] = u_hat[1];}

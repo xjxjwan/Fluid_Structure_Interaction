@@ -4,6 +4,9 @@
 
 #include "AuxiliaryFunctions.h"
 #include <cmath>
+#include <cassert>
+#include <iostream>
+#include <ostream>
 
 
 void func_resize(std::vector<std::vector<std::array<double, 4>>>& data_structure, const int size) {
@@ -11,7 +14,7 @@ void func_resize(std::vector<std::vector<std::array<double, 4>>>& data_structure
 }
 
 
-std::array<double, 4> prim2cons(std::array<double, 4> const& u_ij, double gama) {
+std::array<double, 4> prim2cons(std::array<double, 4> const& u_ij, double gama, double p_inf) {
 
     const double rho = u_ij[0];
     const double u = u_ij[1];
@@ -22,13 +25,13 @@ std::array<double, 4> prim2cons(std::array<double, 4> const& u_ij, double gama) 
     res[0] = rho;  // rho
     res[1] = rho * u;  // momx
     res[2] = rho * v;  // momy
-    res[3] = p / (gama - 1) + 0.5 * rho * (pow(u, 2) + pow(v, 2));  // E
+    res[3] = (p + gama * p_inf) / (gama - 1) + 0.5 * rho * (pow(u, 2) + pow(v, 2));  // E
 
     return res;
 }
 
 
-std::array<double, 4> cons2prim(std::array<double, 4> const& u_ij, double gama) {
+std::array<double, 4> cons2prim(std::array<double, 4> const& u_ij, double gama, double p_inf) {
 
     const double rho = u_ij[0];
     const double momx = u_ij[1];
@@ -39,7 +42,7 @@ std::array<double, 4> cons2prim(std::array<double, 4> const& u_ij, double gama) 
     res[0] = rho;  // rho
     res[1] = momx / rho;  // u
     res[2] = momy / rho;  // v
-    res[3] = (gama - 1) * (E - 0.5 * pow(momx, 2) / rho - 0.5 * pow(momy, 2) / rho);  // p
+    res[3] = (gama - 1) * (E - 0.5 * pow(momx, 2) / rho - 0.5 * pow(momy, 2) / rho) - gama * p_inf;  // p
 
     // // debug
     // if (res[3] < 0) {
@@ -53,7 +56,7 @@ std::array<double, 4> cons2prim(std::array<double, 4> const& u_ij, double gama) 
 
 
 std::vector<double> func_calNormalVector(const std::vector<std::vector<double>>& phi,
-    const int i, const int j, const int dx, const int dy) {
+    const int i, const int j, const double dx, const double dy) {
 
     // calculate the local normal vector by centered difference method
     const double normal_vector_x = (phi[i + 1][j] - phi[i - 1][j]) / (2 * dx) + 1e-16;

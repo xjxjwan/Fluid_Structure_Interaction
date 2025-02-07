@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cassert>
 #include <array>
+#include <iostream>
 #include "FastSweeping.h"
 
 
@@ -54,7 +55,7 @@ std::array<double, 2> solveEikonal(const double phi_x, const double phi_y, const
     // solve the quadratic equation
     double phi_hat_1 = (-b + pow(delta, 0.5)) / (2 * a);
     double phi_hat_2 = (-b - pow(delta, 0.5)) / (2 * a);
-    if (phi_hat_1 * phi_hat_2 > 0) {assert(false);}
+    // if (phi_hat_1 * phi_hat_2 > 0) {std::cout << b << ", " << pow(delta, 0.5) << std::endl; assert (false);}
     return {phi_hat_1, phi_hat_2};
 }
 
@@ -90,10 +91,12 @@ void sweepForwardX(std::vector<std::vector<double>>& phi, const std::vector<std:
 
     // repeat until adjacent to the interface
     std::array<int, 2> interface_point{};
-    for (int j = 2; j < nCells + 2; j++) {
+    bool found = false;
+    for (int j = 2; j < nCells + 2 && !found; j++) {
         for (int i = 2; i < nCells + 2; i++) {
             if (interface_location[i][j] == 1) {  // first time adjacent to the interface
                 interface_point = {i, j};
+                found = true;
                 break;
             }
         }
@@ -101,10 +104,12 @@ void sweepForwardX(std::vector<std::vector<double>>& phi, const std::vector<std:
 
     // repeat until not adjacent to the interface, but the previous one was adjacent
     std::array<int, 2> starting_point{};
-    for (int j = interface_point[1]; j < nCells + 2; j++) {
+    found = false;
+    for (int j = interface_point[1]; j < nCells + 2 && !found; j++) {
         for (int i = interface_point[0]; i < nCells + 2; i++) {
             if (interface_location[i][j] == 0) {  // first time not adjacent to the interface
                 starting_point = {i, j};
+                found = true;
                 break;
             }
         }
@@ -127,10 +132,12 @@ void sweepBackwardX(std::vector<std::vector<double>>& phi, const std::vector<std
 
     // repeat until adjacent to the interface
     std::array<int, 2> interface_point{};
-    for (int j = nCells + 1; j > 1; j--) {
+    bool found = false;
+    for (int j = nCells + 1; j > 1 && !found; j--) {
         for (int i = nCells + 1; i > 1; i--) {
             if (interface_location[i][j] == 1) {  // first time adjacent to the interface
                 interface_point = {i, j};
+                found = true;
                 break;
             }
         }
@@ -138,10 +145,12 @@ void sweepBackwardX(std::vector<std::vector<double>>& phi, const std::vector<std
 
     // repeat until not adjacent to the interface, but the previous one was adjacent
     std::array<int, 2> starting_point{};
-    for (int j = interface_point[1]; j > 1; j--) {
+    found = false;
+    for (int j = interface_point[1]; j > 1 && !found; j--) {
         for (int i = interface_point[0]; i > 1; i--) {
             if (interface_location[i][j] == 0) {  // first time not adjacent to the interface
                 starting_point = {i, j};
+                found = true;
                 break;
             }
         }
@@ -164,10 +173,12 @@ void sweepForwardY(std::vector<std::vector<double>>& phi, const std::vector<std:
 
     // repeat until adjacent to the interface
     std::array<int, 2> interface_point{};
-    for (int i = 2; i < nCells + 2; i++) {
+    bool found = false;
+    for (int i = 2; i < nCells + 2 && !found; i++) {
         for (int j = 2; j < nCells + 2; j++) {
             if (interface_location[i][j] == 1) {  // first time adjacent to the interface
                 interface_point = {i, j};
+                found = true;
                 break;
             }
         }
@@ -175,10 +186,12 @@ void sweepForwardY(std::vector<std::vector<double>>& phi, const std::vector<std:
 
     // repeat until not adjacent to the interface, but the previous one was adjacent
     std::array<int, 2> starting_point{};
-    for (int i = interface_point[0]; i < nCells + 2; i++) {
+    found = false;
+    for (int i = interface_point[0]; i < nCells + 2 && !found; i++) {
         for (int j = interface_point[1]; j < nCells + 2; j++) {
             if (interface_location[i][j] == 0) {  // first time not adjacent to the interface
                 starting_point = {i, j};
+                found = true;
                 break;
             }
         }
@@ -201,10 +214,12 @@ void sweepBackwardY(std::vector<std::vector<double>>& phi, const std::vector<std
 
     // repeat until adjacent to the interface
     std::array<int, 2> interface_point{};
-    for (int i = nCells + 1; i > 1; i--) {
+    bool found = false;
+    for (int i = nCells + 1; i > 1 && !found; i--) {
         for (int j = nCells + 1; j > 1; j--) {
             if (interface_location[i][j] == 1) {  // first time adjacent to the interface
                 interface_point = {i, j};
+                found = true;
                 break;
             }
         }
@@ -212,10 +227,12 @@ void sweepBackwardY(std::vector<std::vector<double>>& phi, const std::vector<std
 
     // repeat until not adjacent to the interface, but the previous one was adjacent
     std::array<int, 2> starting_point{};
-    for (int i = interface_point[0]; i > 1; i--) {
+    found = false;
+    for (int i = interface_point[0]; i > 1 && !found; i--) {
         for (int j = interface_point[1]; j > 1; j--) {
             if (interface_location[i][j] == 0) {  // first time not adjacent to the interface
                 starting_point = {i, j};
+                found = true;
                 break;
             }
         }

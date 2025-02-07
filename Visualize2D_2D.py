@@ -1,8 +1,7 @@
 ## Copyright@2024 Shuoyu Yue
 ## Email: sy481@cam.ac.uk
 ## Created on 06/11/2024
-## Description: Used to visualize the simulation results of practicals in course MEC
-
+## Description: Used to visualize the simulation results of written assignment
 
 import numpy as np
 import matplotlib.pyplot as plt

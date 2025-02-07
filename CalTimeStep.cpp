@@ -13,7 +13,7 @@ double computeTimeStep(const std::vector<std::vector<std::array<double, 4>>>& u1
     for (int i = 2; i < u1.size() - 2; i++) {
         for (int j = 2; j < u1[i].size() - 2; j++) {
             // Transform u from cons to prim
-            std::array<double, 4> u1_prim = cons2prim(u1[i][j], gama_1);
+            std::array<double, 4> u1_prim = cons2prim(u1[i][j], gama_1, p_inf_1);
             double cur_rho = u1_prim[0], cur_vx = u1_prim[1], cur_vy = u1_prim[2], cur_p = u1_prim[3];
             double vel = std::sqrt(std::pow(cur_vx, 2) + std::pow(cur_vy, 2));  // non-negative
             double cur_Cs = std::sqrt(gama_1 * (cur_p + p_inf_1) / cur_rho);  // p and rho cannot be negative
@@ -25,7 +25,7 @@ double computeTimeStep(const std::vector<std::vector<std::array<double, 4>>>& u1
     for (int i = 2; i < u2.size() - 2; i++) {
         for (int j = 2; j < u2[i].size() - 2; j++) {
             // Transform u from cons to prim
-            std::array<double, 4> u2_prim = cons2prim(u2[i][j], gama_2);
+            std::array<double, 4> u2_prim = cons2prim(u2[i][j], gama_2, p_inf_2);
             double cur_rho = u2_prim[0], cur_vx = u2_prim[1], cur_vy = u2_prim[2], cur_p = u2_prim[3];
             double vel = std::sqrt(std::pow(cur_vx, 2) + std::pow(cur_vy, 2));  // non-negative
             double cur_Cs = std::sqrt(gama_2 * (cur_p + p_inf_2) / cur_rho);  // p and rho cannot be negative

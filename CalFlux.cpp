@@ -3,13 +3,13 @@
 #include <cmath>
 
 
-std::array<double, 4> getFluxX(std::array<double, 4> const& u_i, std::array<double, 4> const& u_i1, const double& dx, const double& dt, const double& gama) {
+std::array<double, 4> getFluxX(std::array<double, 4> const& u_i, std::array<double, 4> const& u_i1, const double& dx, const double& dt, const double& gama, const double& p_inf) {
 
     // variable substitution
     const double& rho_i = u_i[0], momx_i = u_i[1], momy_i = u_i[2], E_i = u_i[3];
     const double& rho_i1 = u_i1[0], momx_i1 = u_i1[1], momy_i1 = u_i1[2], E_i1 = u_i1[3];
-    std::array<double, 4> u_i_prim = cons2prim(u_i, gama);
-    std::array<double, 4> u_i1_prim = cons2prim(u_i1, gama);
+    std::array<double, 4> u_i_prim = cons2prim(u_i, gama, p_inf);
+    std::array<double, 4> u_i1_prim = cons2prim(u_i1, gama, p_inf);
     const double& vx_i = u_i_prim[1], vy_i = u_i_prim[2], vx_i1 = u_i1_prim[1], vy_i1 = u_i1_prim[2];
     const double& p_i = u_i_prim[3], p_i1 = u_i1_prim[3];
 
@@ -44,13 +44,13 @@ std::array<double, 4> getFluxX(std::array<double, 4> const& u_i, std::array<doub
 }
 
 
-std::array<double, 4> getFluxY(std::array<double, 4> const& u_i, std::array<double, 4> const& u_i1, const double& dx, const double& dt, const double& gama) {
+std::array<double, 4> getFluxY(std::array<double, 4> const& u_i, std::array<double, 4> const& u_i1, const double& dx, const double& dt, const double& gama, const double& p_inf) {
 
     // variable substitution
     const double& rho_i = u_i[0], momx_i = u_i[1], momy_i = u_i[2], E_i = u_i[3];
     const double& rho_i1 = u_i1[0], momx_i1 = u_i1[1], momy_i1 = u_i1[2], E_i1 = u_i1[3];
-    std::array<double, 4> u_i_prim = cons2prim(u_i, gama);
-    std::array<double, 4> u_i1_prim = cons2prim(u_i1, gama);
+    std::array<double, 4> u_i_prim = cons2prim(u_i, gama, p_inf);
+    std::array<double, 4> u_i1_prim = cons2prim(u_i1, gama, p_inf);
     const double& vx_i = u_i_prim[1], vy_i = u_i_prim[2], vx_i1 = u_i1_prim[1], vy_i1 = u_i1_prim[2];
     const double& p_i = u_i_prim[3], p_i1 = u_i1_prim[3];
 

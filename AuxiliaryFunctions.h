@@ -10,10 +10,10 @@
 
 void func_resize(std::vector<std::vector<std::array<double, 4>>>& data_structure, int size);
 
-std::array<double, 4> prim2cons(const std::array<double, 4>& u_ij, double gama);
+std::array<double, 4> prim2cons(const std::array<double, 4>& u_ij, double gama, double p_inf);
 
-std::array<double, 4> cons2prim(const std::array<double, 4>& u_ij, double gama);
+std::array<double, 4> cons2prim(const std::array<double, 4>& u_ij, double gama, double p_inf);
 
-std::vector<double> func_calNormalVector(const std::vector<std::vector<double>>& phi, int i, int j, int dx, int dy);
+std::vector<double> func_calNormalVector(const std::vector<std::vector<double>>& phi, int i, int j, double dx, double dy);
 
 #endif //AUXILIARYFUNCTIONS_H
