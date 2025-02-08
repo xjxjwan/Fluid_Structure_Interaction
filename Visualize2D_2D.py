@@ -69,5 +69,5 @@ for i, cur_ax in enumerate(axes.flat):
     cur_ax.invert_yaxis()
 
 plt.tight_layout()
-plt.savefig("res/Figures/p2t%d.png" % (case_id))
+# plt.savefig("res/Figures/p2t%d.png" % (case_id))
 plt.show()

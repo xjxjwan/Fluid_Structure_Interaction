@@ -75,6 +75,8 @@ int main() {
     double t = tStart;
     int counter = 0;
     do {
+        std::cout << "=======================Starting iteration " << counter + 1 << "=======================" << std::endl;
+
         // data storage
         std::vector phiPlus1(nCells + 4, std::vector<double>(nCells + 4));
         std::vector<std::vector<std::array<double, 4>>> u1BarL, u1BarR, u1BarU, u1BarD;
@@ -108,7 +110,7 @@ int main() {
                 }
             }
         }
-        if (!found) {assert(false);}  // debug: no interface
+        // if (!found) {assert(false);}  // debug: no interface
 
 
         //**********************************************************************************//
@@ -126,11 +128,16 @@ int main() {
                 if (interface_location[i][j] == 1 && phi[i][j] > 0) {  // ghost cells adjacent to the interface
                     std::array temp_u1_prim = func_solveRiemannProblem(u1, u2, phi, i, j, dx, dy, x0, y0, gama_1, gama_2, p_inf_1, p_inf_2, epsilon);
                     u1[i][j] = prim2cons(temp_u1_prim, gama_1, p_inf_1);
+                    if (std::isnan(u1[i][j][1])) {assert(false);}
                 }
                 // right material (phi > 0)
                 if (interface_location[i][j] == 1 && phi[i][j] < 0) {  // ghost cells adjacent to the interface
                     std::array temp_u2_prim = func_solveRiemannProblem(u1, u2, phi, i, j, dx, dy, x0, y0, gama_1, gama_2, p_inf_1, p_inf_2, epsilon);
                     u2[i][j] = prim2cons(temp_u2_prim, gama_2, p_inf_2);
+                    if (std::isnan(u2[i][j][1])) {
+                        std::cout << temp_u2_prim[0] << " " << temp_u2_prim[1] << " " << temp_u2_prim[2] << " " << temp_u2_prim[3] << std::endl;
+                        assert(false);
+                    }
                 }
             }
         }
@@ -159,7 +166,7 @@ int main() {
                 double vx_i = temp_u_prim[1], vy_i = temp_u_prim[2];
                 double phiBar_ij = levelSetUpdate(phi, i, j, vx_i, vy_i, dx, dy, dt);
                 phiPlus1[i][j] = phiBar_ij;
-
+                // std::cout << i << " " << j << " " << phi[i][j] << " " << phiPlus1[i][j] << std::endl;
             }
         }
         // transmissive boundary condition
@@ -186,9 +193,6 @@ int main() {
         setBoundaryCondition(u1BarL, nCells); setBoundaryCondition(u1BarR, nCells);
         setBoundaryCondition(u2BarL, nCells); setBoundaryCondition(u2BarR, nCells);
 
-        // // debug
-        // bool judgeL = std::isnan(u1BarL[0][0][0]);
-        // bool judgeR = std::isnan(u1BarR[0][0][0]);
 
         // half-time-step update in x-direction
         for (int i = 0; i < nCells + 4; i++) {
@@ -205,9 +209,6 @@ int main() {
             }
         }
 
-        // // debug
-        // if (judgeL != std::isnan(u1BarLUpdate[0][0][0])) {assert(false);}
-        // if (judgeR != std::isnan(u1BarRUpdate[0][0][0])) {assert(false);}
 
         // calculate boundary fluxes in x-direction
         // flux_i对应的是u_i的右边界
@@ -323,8 +324,7 @@ int main() {
             // std::cout << x0 + (i - 1) * dx << ", " << u[i][0] << ", " << u[i][1] << ", " << u[i][2] << std::endl;
             outFile << i - 1.5 << ", " << j - 1.5 << ", "
                 << u1_prim[i][j][0] << ", " << u1_prim[i][j][1] << ", " << u1_prim[i][j][2] << ", " << u1_prim[i][j][3] << ", "
-                << u2_prim[i][j][0] << ", " << u2_prim[i][j][1] << ", " << u2_prim[i][j][2] << ", " << u2_prim[i][j][3] << ", "
-                << std::endl;
+                << u2_prim[i][j][0] << ", " << u2_prim[i][j][1] << ", " << u2_prim[i][j][2] << ", " << u2_prim[i][j][3] << std::endl;
         }
     }
     outFile.close();

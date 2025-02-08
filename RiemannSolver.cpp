@@ -60,7 +60,7 @@ void RiemannSolver::CalCentralPressure(double gama_l, double gama_r, double p_in
         double df = df_l + df_r;
 
         p_star_last = p_star;
-        p_star = p_star - f / df;
+        p_star = p_star - 0.1 * f / df;
         iter_num++;
         // std::cout << iter_num << ": " << p_star << std::endl;
     }
