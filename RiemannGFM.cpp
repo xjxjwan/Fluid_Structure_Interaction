@@ -41,6 +41,25 @@ std::array<double, 4> func_bilinearIntp(const std::vector<std::vector<std::array
         if (i <= mid_i && j > mid_j) {u_intp = u[i_1][j_2];}
         if (i > mid_i && j <= mid_j) {u_intp = u[i_2][j_1];}
         if (i > mid_i && j > mid_j) {u_intp = u[i_2][j_2];}
+
+        // if (u_intp[2] != 0) {
+        //     std::cout << i_1 << " " << i_2 << " " <<  j_1 << " " <<  j_2 << std::endl;
+        //     std::cout << mid_i << " " << mid_j << std::endl;
+        //     std::cout << i << " " << j << std::endl;
+        //     std::cout << u[i_1][j_2][2] << std::endl;
+        //     std::cout << phi[i_1][j_2] << std::endl;
+        //     assert(false);
+        // }
+
+        // if (std::isnan(u_intp[0]) || u_intp[0] < 1e-10) {
+        //     std::cout << "hhh: " << u_intp[0] << std::endl;
+        //     std::cout << i_1 << " " << i_2 << " " <<  j_1 << " " <<  j_2 << std::endl;
+        //     std::cout << mid_i << " " << mid_j << std::endl;
+        //     std::cout << i << " " << j << std::endl;
+        //     std::cout << u[i_1][j_2][0] << std::endl;
+        //     assert(false);
+        // }
+
         return u_intp;
     }
 
@@ -59,14 +78,18 @@ std::array<double, 4> func_bilinearIntp(const std::vector<std::vector<std::array
 
     // bilinear interpolation
     double rho_intp = func_singleVarBilinearIntp(rho_11, rho_12, rho_21, rho_22, x_1, x_2, y_1, y_2, x, y);
-    double vx_intp = func_singleVarBilinearIntp(momx_11, momx_12, momx_21, momx_22, x_1, x_2, y_1, y_2, x, y);
-    double vy_intp = func_singleVarBilinearIntp(momy_11, momy_12, momy_21, momy_22, x_1, x_2, y_1, y_2, x, y);
-    double p_intp = func_singleVarBilinearIntp(E_11, E_12, E_21, E_22, x_1, x_2, y_1, y_2, x, y);
+    double momx_intp = func_singleVarBilinearIntp(momx_11, momx_12, momx_21, momx_22, x_1, x_2, y_1, y_2, x, y);
+    double momy_intp = func_singleVarBilinearIntp(momy_11, momy_12, momy_21, momy_22, x_1, x_2, y_1, y_2, x, y);
+    double E_intp = func_singleVarBilinearIntp(E_11, E_12, E_21, E_22, x_1, x_2, y_1, y_2, x, y);
 
-    std::array u_intp = {rho_intp, vx_intp, vy_intp, p_intp};
+    std::array u_intp = {rho_intp, momx_intp, momy_intp, E_intp};
+
+    // if (momy_intp != 0) {
+    //     assert(false);
+    // }
 
     // if (std::isnan(rho_intp) || rho_intp < 1e-10) {
-    //     std::cout << "hhh" << std::endl;
+    //     std::cout << "hhh: " << rho_intp << std::endl;
     //     std::cout << rho_11 << " " << rho_12 << " " <<  rho_21 << " " <<  rho_22 << std::endl;
     //     std::cout << i << " " << j << std::endl;
     //     std::cout << i_1 << " " << i_2 << " " <<  j_1 << " " <<  j_2 << std::endl;
@@ -96,12 +119,24 @@ std::vector<std::array<double, 4>> func_calInitialStates(const std::vector<std::
 
     // get two initial states for the Riemann problem by bilinear interpolation
     const double pos1_i = (pos1_x - x0) / dx + 1.5, pos1_j = (pos1_y - y0) / dy + 1.5;
-    // std::cout << "pos1_i: " << pos1_i << " pos1_j: " << pos1_j << std::endl;
+    // if (pos1_j > 103) {
+    //     std::cout << "cur_phi: " << cur_phi << "cur_pos_x: " << cur_pos[0] << "cur_pos_y: " << cur_pos[1] << std::endl;
+    //     std::cout << "interface_pos_x: " << interface_pos_x << " interface_pos_y: " << interface_pos_y << std::endl;
+    //     std::cout << "pos1_x: " << pos2_x << " pos1_y: " << pos2_y << std::endl;
+    //     std::cout << "pos1_i: " << pos1_i << " pos1_j: " << pos1_j << std::endl;
+    //     assert(false);
+    // }
     bool phi_positive = false;
     const std::array<double, 4> u1_intp = func_bilinearIntp(u1, phi, pos1_i, pos1_j, dx, dy, x0, y0, phi_positive);
 
     const double pos2_i = (pos2_x - x0) / dx + 1.5, pos2_j = (pos2_y - y0) / dy + 1.5;
-    // std::cout << "pos2_i: " << pos2_i << " pos1_j: " << pos2_j << std::endl;
+    // if (pos2_j > 103) {
+    //     std::cout << "cur_phi: " << cur_phi << " cur_pos_x: " << cur_pos[0] << " cur_pos_y: " << cur_pos[1] << std::endl;
+    //     std::cout << "interface_pos_x: " << interface_pos_x << " interface_pos_y: " << interface_pos_y << std::endl;
+    //     std::cout << "pos2_x: " << pos2_x << " pos2_y: " << pos2_y << std::endl;
+    //     std::cout << "pos2_i: " << pos2_i << " pos2_j: " << pos2_j << std::endl;
+    //     assert(false);
+    // }
     phi_positive = true;
     const std::array<double, 4> u2_intp = func_bilinearIntp(u2, phi, pos2_i, pos2_j, dx, dy, x0, y0, phi_positive);
 
@@ -118,7 +153,11 @@ std::array<double, 4> func_solveRiemannProblem(const std::vector<std::vector<std
     // interpolate initial states
     const double cur_phi = phi[i][j];
     std::vector normal_vector = func_calNormalVector(phi, i, j, dx, dy);
-    std::vector cur_pos = {x0 + (i - 1.5) * dx, y0 + (i - 1.5) * dy};
+    std::vector cur_pos = {x0 + (i - 1.5) * dx, y0 + (j - 1.5) * dy};
+    // if (cur_pos[0] == 0.995 && cur_pos[1] == 0.995) {
+    //     std::cout << i << " " << j << " " << dx << " " << dy << std::endl;
+    //     assert(false);
+    // }
     std::vector initial_states = func_calInitialStates(u1, u2, phi, cur_phi, normal_vector, cur_pos, dx, dy, x0, y0);
     std::array u1_intp = initial_states[0], u2_intp = initial_states[1];
 
@@ -155,11 +194,22 @@ std::array<double, 4> func_solveRiemannProblem(const std::vector<std::vector<std
         temp_u_prim = {ghost_rho_r, ghost_vx_r, ghost_vy_r, ghost_p};
     }
 
+    // if (ghost_vy_l != 0 || ghost_vy_r != 0) {
+    //     std::cout << "ghost_vy_l: " << ghost_vy_l << " ghost_vy_r: " << ghost_vy_r << std::endl;
+    //     std::cout << "normal vector: nx=" << normal_vector[0] << " ny=" << normal_vector[1] << std::endl;
+    //     std::cout << "ghost_vn: " << ghost_vn << std::endl;
+    //     std::cout << "Cons1: rho1=" << u1_intp[0] << " momx1=" << u1_intp[1] << " momy1=" << u1_intp[2] << " E1=" << u1_intp[3] << std::endl;
+    //     std::cout << "Prim1: rho1=" << u1_intp_prim[0] << " vn1=" << vn_l << " vt1_x=" << vt_l[0] << " vt1_y=" << vt_l[1] << " p1=" << u1_intp_prim[3] << std::endl;
+    //     std::cout << "Cons2: rho2=" << u2_intp[0] << " momx2=" << u2_intp[1] << " momy2=" << u2_intp[2] << " E2=" << u2_intp[3] << std::endl;
+    //     std::cout << "Prim2: rho2=" << u2_intp_prim[0] << " vn2=" << vn_r << " vt2_x=" << vt_r[0] << " vt2_y=" << vt_r[1] << " p2=" << u2_intp_prim[3] << std::endl;
+    //     assert(false);
+    // }
+
     // if (std::isnan(temp_u_prim[0]) || std::isnan(temp_u_prim[1]) || std::isnan(temp_u_prim[2]) || std::isnan(temp_u_prim[3])) {
     //     std::cout << u1_intp[0] << " " << u1_intp[1] << " " << u1_intp[2] << " " << u1_intp[3] << std::endl;
     //     std::cout << u1_intp_prim[0] << " " << vn_l << " " << u1_intp_prim[3] << std::endl;
     //     std::cout << u2_intp[0] << " " << u2_intp[1] << " " << u2_intp[2] << " " << u2_intp[3] << std::endl;
-    //     std::cout << u2_intp_prim[0] << " " << vn_l << " " << u2_intp_prim[3] << std::endl;
+    //     std::cout << u2_intp_prim[0] << " " << vn_r << " " << u2_intp_prim[3] << std::endl;
     //     std::cout << ghost_rho_l << " " << ghost_rho_r << std::endl;
     //     std::cout << ghost_vn << " " << ghost_p << std::endl;
     //     std::cout << normal_vector[0] << " " << normal_vector[1] << std::endl;

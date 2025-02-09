@@ -59,9 +59,10 @@ std::vector<double> func_calNormalVector(const std::vector<std::vector<double>>&
     const int i, const int j, const double dx, const double dy) {
 
     // calculate the local normal vector by centered difference method
-    const double normal_vector_x = (phi[i + 1][j] - phi[i - 1][j]) / (2 * dx) + 1e-16;
-    const double normal_vector_y = (phi[i][j + 1] - phi[i][j - 1]) / (2 * dy) + 1e-16;
-    const double length = sqrt(pow(normal_vector_x, 2) + pow(normal_vector_y, 2));
+    const double normal_vector_x = (phi[i + 1][j] - phi[i - 1][j]) / (2 * dx);
+    const double normal_vector_y = (phi[i][j + 1] - phi[i][j - 1]) / (2 * dy);
+    double length = sqrt(pow(normal_vector_x, 2) + pow(normal_vector_y, 2));
+    if (length == 0.0) {length = 1.0;}
     const std::vector normal_vector = {normal_vector_x / length, normal_vector_y / length};
     return normal_vector;
 }

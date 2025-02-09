@@ -51,13 +51,18 @@ int main() {
             std::array<double, 4> u_ij{};
             double phi_i = 0.0;
 
-            // Case 1: The Sod Test
-            // if (x <= 0.5) {u_ij = {1.0, 0.0, 0.0, 1.0};}
-            // else {u_ij = {0.125, 0.0, 0.0, 0.1};}
-            // phi_i = x - 0.5;
-            if (y <= 0.5) {u_ij = {1.0, 0.0, 0.0, 1.0};}
-            else {u_ij = {0.125, 0.0, 0.0, 0.1};}
-            phi_i = y - 0.5;
+            // Case 1: The Sod Test in X-direction
+            if (case_id == 1) {
+                if (x <= 0.5) {u_ij = {1.0, 0.0, 0.0, 1.0};}
+                else {u_ij = {0.125, 0.0, 0.0, 0.1};}
+                phi_i = x - 0.5;
+            }
+            // Case 2: The Sod Test in Y-direction
+            if (case_id == 2) {
+                if (y <= 0.5) {u_ij = {1.0, 0.0, 0.0, 1.0};}
+                else {u_ij = {0.125, 0.0, 0.0, 0.1};}
+                phi_i = y - 0.5;
+            }
 
             // transform from primitive to conservative
             u1[i][j] = prim2cons(u_ij, gama_1, p_inf_1);
@@ -128,23 +133,28 @@ int main() {
                 if (interface_location[i][j] == 1 && phi[i][j] > 0) {  // ghost cells adjacent to the interface
                     std::array temp_u1_prim = func_solveRiemannProblem(u1, u2, phi, i, j, dx, dy, x0, y0, gama_1, gama_2, p_inf_1, p_inf_2, epsilon);
                     u1[i][j] = prim2cons(temp_u1_prim, gama_1, p_inf_1);
-                    if (std::isnan(u1[i][j][1])) {assert(false);}
+                    if (std::isnan(u1[i][j][0]) || std::isnan(u1[i][j][1]) || std::isnan(u1[i][j][2]) || std::isnan(u1[i][j][3])) {
+                        std::cout << temp_u1_prim[0] << " " << temp_u1_prim[1] << " " << temp_u1_prim[2] << " " << temp_u1_prim[3] << std::endl;
+                        assert(false);
+                    }
                 }
                 // right material (phi > 0)
                 if (interface_location[i][j] == 1 && phi[i][j] < 0) {  // ghost cells adjacent to the interface
                     std::array temp_u2_prim = func_solveRiemannProblem(u1, u2, phi, i, j, dx, dy, x0, y0, gama_1, gama_2, p_inf_1, p_inf_2, epsilon);
                     u2[i][j] = prim2cons(temp_u2_prim, gama_2, p_inf_2);
-                    if (std::isnan(u2[i][j][1])) {
+                    if (std::isnan(u1[i][j][0]) || std::isnan(u1[i][j][1]) || std::isnan(u1[i][j][2]) || std::isnan(u1[i][j][3])) {
                         std::cout << temp_u2_prim[0] << " " << temp_u2_prim[1] << " " << temp_u2_prim[2] << " " << temp_u2_prim[3] << std::endl;
                         assert(false);
                     }
                 }
             }
         }
-        // // constant extrapolation
-        // constantExtrapolation(u1, phi, interface_location, nCells, dx, dy, true);  // ghost fluid region phi > 0, phi_positive = true
-        // constantExtrapolation(u2, phi, interface_location, nCells, dx, dy, false);  // ghost fluid region phi < 0, phi_positive = false
+        // constant extrapolation
+        constantExtrapolation(u1, phi, interface_location, nCells, dx, dy, true);  // ghost fluid region phi > 0, phi_positive = true
+        constantExtrapolation(u2, phi, interface_location, nCells, dx, dy, false);  // ghost fluid region phi < 0, phi_positive = false
 
+
+        //**********************************************************************************//
         // compute time step
         double dt = computeTimeStep(u1, u2, C, dx, dy, gama_1, gama_2, p_inf_1, p_inf_2);
         t = t + dt;

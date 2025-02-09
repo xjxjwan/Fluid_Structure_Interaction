@@ -10,7 +10,7 @@ import os
 
 
 ## Global Parameters ##
-case_id = 1
+case_id = 2
 nCells = 100
 x0, x1 = 0.0, 1.0
 y0, y1 = 0.0, 1.0
@@ -27,12 +27,10 @@ phi = np.zeros((nCells, nCells))
 
 
 ## visualization preparation
-fig, axes = plt.subplots(2, 2, figsize=(9, 9))
+fig, axes = plt.subplots(2, 2, figsize=(10, 9))
 manager = plt.get_current_fig_manager()
-manager.window.wm_geometry("+1000+80")
+manager.window.wm_geometry("+600+60")
 label_list = ['Density', 'VelocityX', 'VelocityY', 'Pressure']
-# 添加独立 colorbar 轴（放置在子图右侧）
-cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
 
 
 ## extract files
@@ -44,7 +42,7 @@ ites = sorted(ites)
 
 
 ## visualization
-for ite in ites:
+def visualize(ite):
     
     file_name = "ite=%d.txt" % ite
     file_path = os.path.join(folder_path, file_name)
@@ -75,9 +73,7 @@ for ite in ites:
     data_list = [rho, vx, vy, p]
 
     # Define the actual coordinate values for ticks
-    origin_x_ticks = np.linspace(0, nCells, 10, dtype=int)
     x_ticks = np.linspace(x0, x1, 10).round(1)
-    origin_y_ticks = np.linspace(0, nCells, 10, dtype=int)
     y_ticks = np.linspace(y0, y1, 10).round(1)
     y_ticks = np.flipud(y_ticks)
     
@@ -87,10 +83,10 @@ for ite in ites:
         # 获取当前数据
         data = data_list[i]
 
-        # 绘制 heatmap，关闭自动刻度调整，确保轴不被覆盖
+        # **让每个 heatmap 拥有自己的 colorbar**
         sns.heatmap(
-            data, ax=cur_ax, cbar=(i == 0), cbar_ax=(cbar_ax if i == 0 else None),
-            xticklabels=False, yticklabels=False  # 禁用自动刻度
+            data, ax=cur_ax, cbar=True, cbar_kws={"shrink": 0.8},  # `shrink` 控制 colorbar 尺寸
+            xticklabels=False, yticklabels=False  # 禁用 heatmap 默认的 tick labels
         )
 
         cur_ax.set_title(label_list[i])
@@ -107,6 +103,15 @@ for ite in ites:
         cur_ax.set_yticks(ytick_positions)  # **确保 y 轴刻度与网格对齐**
         cur_ax.set_yticklabels(y_ticks)  # **确保是物理坐标 0-1**
 
-    fig.suptitle(f'Time = {time:.5f}s  Case = 1 (Sod Test in X-direction)', fontsize=14)
-    fig.subplots_adjust(left=0.1, right=0.88, bottom=0.1, top=0.9, wspace=0.3, hspace=0.3)
-    plt.pause(0.05)
+    fig.suptitle(f'Time = {time:.3f}s  Case = 2 (Sod Test in Y-direction)', fontsize=14)
+    plt.tight_layout()
+    # plt.pause(0.05)
+    plt.show()
+
+
+if __name__ == "__main__":
+
+    visualize(ites[-1])
+    # for ite in ites:
+    #     visualize(ite)
+
