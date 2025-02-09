@@ -34,7 +34,7 @@ int main() {
     std::vector phi(nCells + 4, std::vector<double>(nCells + 4));
 
     // parameters that change in experiments
-    int case_id = 1;  // test id
+    int case_id = 2;  // test id
     double tStop = 0.25;  // simulation time
     double gama_1 = 1.4, gama_2 = 1.4;  // parameter for EoS
     double p_inf_1 = 0.0, p_inf_2 = 0.0;  // parameter for the stiffened gas EoS
@@ -52,12 +52,12 @@ int main() {
             double phi_i = 0.0;
 
             // Case 1: The Sod Test
-            if (x <= 0.5) {u_ij = {1.0, 0.0, 0.0, 1.0};}
-            else {u_ij = {0.125, 0.0, 0.0, 0.1};}
-            phi_i = x - 0.5;
-            // if (y <= 0.5) {u_ij = {1.0, 0.0, 0.0, 1.0};}
+            // if (x <= 0.5) {u_ij = {1.0, 0.0, 0.0, 1.0};}
             // else {u_ij = {0.125, 0.0, 0.0, 0.1};}
-            // phi_i = y - 0.5;
+            // phi_i = x - 0.5;
+            if (y <= 0.5) {u_ij = {1.0, 0.0, 0.0, 1.0};}
+            else {u_ij = {0.125, 0.0, 0.0, 0.1};}
+            phi_i = y - 0.5;
 
             // transform from primitive to conservative
             u1[i][j] = prim2cons(u_ij, gama_1, p_inf_1);
@@ -148,7 +148,7 @@ int main() {
         // compute time step
         double dt = computeTimeStep(u1, u2, C, dx, dy, gama_1, gama_2, p_inf_1, p_inf_2);
         t = t + dt;
-        std::cout << t << std::endl;
+        std::cout << "t = " << t << std::endl;
 
 
         //**********************************************************************************//
@@ -185,7 +185,6 @@ int main() {
                 std::vector<std::array<double, 4>> u2BarX_ij = dataReconstruct(u2[i - 1][j], u2[i][j], u2[i + 1][j]);
                 u2BarL[i][j] = u2BarX_ij[0];
                 u2BarR[i][j] = u2BarX_ij[1];
-
             }
         }
 
@@ -205,7 +204,6 @@ int main() {
                 std::vector<std::array<double, 4>> u2BarUpdateX_ij = halfTimeStepUpdateX(u2BarL[i][j], u2BarR[i][j], dx, dt, gama_2, p_inf_2);
                 u2BarLUpdate[i][j] = u2BarUpdateX_ij[0];
                 u2BarRUpdate[i][j] = u2BarUpdateX_ij[1];
-
             }
         }
 
@@ -248,7 +246,6 @@ int main() {
                 std::vector<std::array<double, 4>> u2BarY_ij = dataReconstruct(u2[i][j - 1], u2[i][j], u2[i][j + 1]);
                 u2BarD[i][j] = u2BarY_ij[0];
                 u2BarU[i][j] = u2BarY_ij[1];
-
             }
         }
 
@@ -298,36 +295,36 @@ int main() {
         phi = phiPlus1;
         counter++;
 
+
+        // transform
+        std::vector<std::vector<std::array<double, 4>>> u1_prim, u2_prim;
+        u1_prim.resize(nCells + 4, std::vector<std::array<double, 4>>(nCells + 4));
+        u2_prim.resize(nCells + 4, std::vector<std::array<double, 4>>(nCells + 4));
+        for (int i = 0; i < nCells + 4; i++) {
+            for (int j = 0; j < nCells + 4; j++) {
+                u1_prim[i][j] = cons2prim(u1[i][j], gama_1, p_inf_1);
+                u2_prim[i][j] = cons2prim(u2[i][j], gama_2, p_inf_2);
+            }
+        }
+
+
+        // data recording
+        std::ostringstream oss;
+        oss << "D:/Study_Master/WrittenAssignment/WorkSpace/res/case_" << case_id << "/ite=" << counter << ".txt";
+        std::string fileName = oss.str();
+        std::fstream outFile(fileName, std::ios::out);
+        for (int i = 2; i < nCells + 2; i++) {
+            for (int j = 2; j < nCells + 2; j++) {
+                // std::cout << x0 + (i - 1) * dx << ", " << u[i][0] << ", " << u[i][1] << ", " << u[i][2] << std::endl;
+                outFile << x0 + (i - 1.5) * dx << ", " << y0 + (j - 1.5) * dy
+                << ", " << u1_prim[i][j][0] << ", " << u1_prim[i][j][1] << ", " << u1_prim[i][j][2] << ", " << u1_prim[i][j][3]
+                << ", " << u2_prim[i][j][0] << ", " << u2_prim[i][j][1] << ", " << u2_prim[i][j][2] << ", " << u2_prim[i][j][3]
+                << ", " << phi[i][j] << ", " << t << std::endl;
+            }
+        }
+        outFile.close();
+
     } while (t < tStop);
-
-
-    // transform from conservative to primitive
-    std::vector<std::vector<std::array<double, 4>>> u1_prim, u2_prim;
-    u1_prim.resize(nCells + 4, std::vector<std::array<double, 4>>(nCells + 4));
-    u2_prim.resize(nCells + 4, std::vector<std::array<double, 4>>(nCells + 4));
-    for (int i = 0; i < nCells + 4; i++) {
-        for (int j = 0; j < nCells + 4; j++) {
-            u1_prim[i][j] = cons2prim(u1[i][j], gama_1, p_inf_1);
-            u2_prim[i][j] = cons2prim(u2[i][j], gama_2, p_inf_2);
-        }
-    }
-
-
-    // record result
-    std::cout << "Simulation ended, data recording" << std::endl;
-    std::ostringstream oss;
-    oss << "D:/Study_Master/WrittenAssignment/WorkSpace/res/case_" << case_id << ".txt";
-    std::string fileName = oss.str();
-    std::fstream outFile(fileName, std::ios::out);
-    for (int i = 2; i < nCells + 2; i++) {
-        for (int j = 2; j < nCells + 2; j++) {
-            // std::cout << x0 + (i - 1) * dx << ", " << u[i][0] << ", " << u[i][1] << ", " << u[i][2] << std::endl;
-            outFile << i - 1.5 << ", " << j - 1.5 << ", "
-                << u1_prim[i][j][0] << ", " << u1_prim[i][j][1] << ", " << u1_prim[i][j][2] << ", " << u1_prim[i][j][3] << ", "
-                << u2_prim[i][j][0] << ", " << u2_prim[i][j][1] << ", " << u2_prim[i][j][2] << ", " << u2_prim[i][j][3] << std::endl;
-        }
-    }
-    outFile.close();
 
     return 0;
 }
