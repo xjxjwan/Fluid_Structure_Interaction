@@ -10,7 +10,7 @@ import os
 
 
 ## Global Parameters ##
-case_id = 2
+case_id = 1
 nCells = 100
 x0, x1 = 0.0, 1.0
 y0, y1 = 0.0, 1.0
@@ -103,7 +103,7 @@ def visualize(ite):
         cur_ax.set_yticks(ytick_positions)  # **确保 y 轴刻度与网格对齐**
         cur_ax.set_yticklabels(y_ticks)  # **确保是物理坐标 0-1**
 
-    fig.suptitle(f'Time = {time:.3f}s  Case = 2 (Sod Test in Y-direction)', fontsize=14)
+    fig.suptitle(f'Time = {time:.3f}s  Case = 1 (Sod Test in X-direction)', fontsize=14)
     plt.tight_layout()
     # plt.pause(0.05)
     plt.show()

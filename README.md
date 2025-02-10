@@ -3,4 +3,5 @@ This project involves solving the two-dimensional compressible unsteady Euler eq
 Structure:
 1. The .cpp and .h files in current folder are for 2D Riemann problem-based GFM, with visualize2D.py for simulation results visualization.
 2. The '1D' foler contains the code for 1D Riemann problem-based GFM.
-3. The 'res' folder contains simulation results, including simulation data and videos.
+3. The '2D_SLIC' foler contains the code for 2D SLIC Euler Equation simulator.
+4. In each folder, the 'res' folder contains simulation results, including simulation data, figures, and videos.

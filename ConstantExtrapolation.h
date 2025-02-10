@@ -13,19 +13,19 @@ void constantExtrapolation(std::vector<std::vector<std::array<double, 4>>>& u, c
     const std::vector<std::vector<int>>& interface_location,
     int nCells, double dx, double dy, bool phi_positive);
 
-void sweepForwardX(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
+void sweep1(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
     const std::vector<std::vector<int>>& interface_location,
     int nCells, double dx, double dy, bool phi_positive);
 
-void sweepBackwardX(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
+void sweep2(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
     const std::vector<std::vector<int>>& interface_location,
     const int nCells, const double dx, const double dy, bool phi_positive);
 
-void sweepForwardY(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
+void sweep3(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
     const std::vector<std::vector<int>>& interface_location,
     const int nCells, const double dx, const double dy, bool phi_positive);
 
-void sweepBackwardY(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
+void sweep4(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
     const std::vector<std::vector<int>>& interface_location,
     const int nCells, const double dx, const double dy, bool phi_positive);
 

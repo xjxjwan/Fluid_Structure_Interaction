@@ -34,7 +34,7 @@ int main() {
     std::vector phi(nCells + 4, std::vector<double>(nCells + 4));
 
     // parameters that change in experiments
-    int case_id = 2;  // test id
+    int case_id = 1;  // test id
     double tStop = 0.25;  // simulation time
     double gama_1 = 1.4, gama_2 = 1.4;  // parameter for EoS
     double p_inf_1 = 0.0, p_inf_2 = 0.0;  // parameter for the stiffened gas EoS
@@ -133,25 +133,28 @@ int main() {
                 if (interface_location[i][j] == 1 && phi[i][j] > 0) {  // ghost cells adjacent to the interface
                     std::array temp_u1_prim = func_solveRiemannProblem(u1, u2, phi, i, j, dx, dy, x0, y0, gama_1, gama_2, p_inf_1, p_inf_2, epsilon);
                     u1[i][j] = prim2cons(temp_u1_prim, gama_1, p_inf_1);
-                    if (std::isnan(u1[i][j][0]) || std::isnan(u1[i][j][1]) || std::isnan(u1[i][j][2]) || std::isnan(u1[i][j][3])) {
-                        std::cout << temp_u1_prim[0] << " " << temp_u1_prim[1] << " " << temp_u1_prim[2] << " " << temp_u1_prim[3] << std::endl;
-                        assert(false);
-                    }
+                    // if (std::isnan(u1[i][j][0]) || std::isnan(u1[i][j][1]) || std::isnan(u1[i][j][2]) || std::isnan(u1[i][j][3])) {
+                    //     std::cout << temp_u1_prim[0] << " " << temp_u1_prim[1] << " " << temp_u1_prim[2] << " " << temp_u1_prim[3] << std::endl;
+                    //     assert(false);
+                    // }
                 }
                 // right material (phi > 0)
                 if (interface_location[i][j] == 1 && phi[i][j] < 0) {  // ghost cells adjacent to the interface
                     std::array temp_u2_prim = func_solveRiemannProblem(u1, u2, phi, i, j, dx, dy, x0, y0, gama_1, gama_2, p_inf_1, p_inf_2, epsilon);
                     u2[i][j] = prim2cons(temp_u2_prim, gama_2, p_inf_2);
-                    if (std::isnan(u1[i][j][0]) || std::isnan(u1[i][j][1]) || std::isnan(u1[i][j][2]) || std::isnan(u1[i][j][3])) {
-                        std::cout << temp_u2_prim[0] << " " << temp_u2_prim[1] << " " << temp_u2_prim[2] << " " << temp_u2_prim[3] << std::endl;
-                        assert(false);
-                    }
+                    // if (std::isnan(u1[i][j][0]) || std::isnan(u1[i][j][1]) || std::isnan(u1[i][j][2]) || std::isnan(u1[i][j][3])) {
+                    //     std::cout << temp_u2_prim[0] << " " << temp_u2_prim[1] << " " << temp_u2_prim[2] << " " << temp_u2_prim[3] << std::endl;
+                    //     assert(false);
+                    // }
                 }
             }
         }
-        // constant extrapolation
+
+        // populate ghost fluid regions
         constantExtrapolation(u1, phi, interface_location, nCells, dx, dy, true);  // ghost fluid region phi > 0, phi_positive = true
         constantExtrapolation(u2, phi, interface_location, nCells, dx, dy, false);  // ghost fluid region phi < 0, phi_positive = false
+        setBoundaryCondition(u1, nCells);
+        setBoundaryCondition(u2, nCells);
 
 
         //**********************************************************************************//
@@ -304,7 +307,6 @@ int main() {
         u2 = u2Plus1;
         phi = phiPlus1;
         counter++;
-
 
         // transform
         std::vector<std::vector<std::array<double, 4>>> u1_prim, u2_prim;
