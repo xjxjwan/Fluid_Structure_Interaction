@@ -11,7 +11,7 @@
 
 void constantExtrapolation(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
     const std::vector<std::vector<int>>& interface_location,
-    int nCells, double dx, double dy, bool phi_positive);
+    int nCells, double dx, double dy, bool phi_positive, double huge);
 
 void sweep1(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
     const std::vector<std::vector<int>>& interface_location,

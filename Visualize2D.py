@@ -10,7 +10,7 @@ import os
 
 
 ## Global Parameters ##
-case_id = 1
+case_id = 2
 nCells = 100
 x0, x1 = 0.0, 1.0
 y0, y1 = 0.0, 1.0
@@ -31,6 +31,7 @@ fig, axes = plt.subplots(2, 2, figsize=(10, 9))
 manager = plt.get_current_fig_manager()
 manager.window.wm_geometry("+600+60")
 label_list = ['Density', 'VelocityX', 'VelocityY', 'Pressure']
+# cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
 
 
 ## extract files
@@ -78,6 +79,7 @@ def visualize(ite):
     y_ticks = np.flipud(y_ticks)
     
     for i, cur_ax in enumerate(axes.flat):
+
         cur_ax.cla()
 
         # 获取当前数据
@@ -103,9 +105,11 @@ def visualize(ite):
         cur_ax.set_yticks(ytick_positions)  # **确保 y 轴刻度与网格对齐**
         cur_ax.set_yticklabels(y_ticks)  # **确保是物理坐标 0-1**
 
-    fig.suptitle(f'Time = {time:.3f}s  Case = 1 (Sod Test in X-direction)', fontsize=14)
+    
+    fig.suptitle(f'Time = {time:.3f}s', fontsize=14)
+    # fig.subplots_adjust(left=0.1, right=0.88, bottom=0.1, top=0.9, wspace=0.3, hspace=0.3)
     plt.tight_layout()
-    # plt.pause(0.05)
+    # plt.pause(0.01)
     plt.show()
 
 

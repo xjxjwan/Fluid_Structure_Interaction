@@ -10,14 +10,14 @@
 
 
 void fastSweeping(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
-    const int nCells, const double dx, const double dy) {
+    const int nCells, const double dx, const double dy, const double huge) {
 
     // Remove all values not adjacent to interface
     for (int i = 0; i < nCells + 4; i++) {
         for (int j = 0; j < nCells + 4; j++) {
             if (interface_location[i][j] == 0) {  // not adjacent to interface
-                if (phi[i][j] > 0) {phi[i][j] = 99999.0;}
-                else {phi[i][j] = -99999.0;}
+                if (phi[i][j] > 0) {phi[i][j] = huge;}
+                else {phi[i][j] = -huge;}
             }
         }
     }
@@ -27,6 +27,19 @@ void fastSweeping(std::vector<std::vector<double>>& phi, const std::vector<std::
     sweep2(phi, interface_location, nCells, dx, dy);
     sweep3(phi, interface_location, nCells, dx, dy);
     sweep4(phi, interface_location, nCells, dx, dy);
+
+
+    // Check all values updated
+    for (int i = 2; i < nCells + 2; i++) {
+        for (int j = 2; j < nCells + 2; j++) {
+            if (interface_location[i][j] == 0) {  // not adjacent to interface
+                if (std::abs(phi[i][j]) == huge) {
+                    std::cout << "This is grid is not updated: " << i << " " << j << std::endl;
+                    assert(false);
+                }
+            }
+        }
+    }
 }
 
 
@@ -89,36 +102,16 @@ int update(std::vector<std::vector<double>>& phi, int i, int j, double dx, doubl
 void sweep1(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
     const int nCells, const double dx, const double dy) {
 
-    // repeat until adjacent to the interface
-    std::array<int, 2> interface_point{};
-    bool found = false;
-    for (int i = 2; i < nCells + 2 && !found; i++) {
+    bool found_interface = false;
+    for (int i = 2; i < nCells + 2; i++) {
         for (int j = 2; j < nCells + 2; j++) {
-            if (interface_location[i][j] == 1) {  // first time adjacent to the interface
-                interface_point = {i, j};
-                found = true;
-                break;
+            // repeat until adjacent to the interface
+            if (interface_location[i][j] == 0 && !found_interface) {
+                continue;
             }
-        }
-    }
-
-    // repeat until not adjacent to the interface, but the previous one was adjacent
-    std::array<int, 2> starting_point{};
-    found = false;
-    for (int i = interface_point[0]; i < nCells + 2 && !found; i++) {
-        for (int j = interface_point[1]; j < nCells + 2; j++) {
-            if (interface_location[i][j] == 0) {  // first time not adjacent to the interface
-                starting_point = {i, j};
-                found = true;
-                break;
-            }
-        }
-    }
-
-    // start sweeping
-    for (int i = starting_point[0]; i < nCells + 2; i++) {
-        for (int j = starting_point[1]; j < nCells + 2; j++) {
-            if (interface_location[i][j] == 0) {  // only update if not adjacent to the interface
+            found_interface = true;
+            // start sweeping
+            if (interface_location[i][j] == 0) {
                 update(phi, i, j, dx, dy);
             }
         }
@@ -130,36 +123,16 @@ void sweep1(std::vector<std::vector<double>>& phi, const std::vector<std::vector
 void sweep2(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
     const int nCells, const double dx, const double dy) {
 
-    // repeat until adjacent to the interface
-    std::array<int, 2> interface_point{};
-    bool found = false;
-    for (int i = nCells + 1; i > 1 && !found; i--) {
+    bool found_interface = false;
+    for (int i = nCells + 1; i > 1; i--) {
         for (int j = 2; j < nCells + 2; j++) {
-            if (interface_location[i][j] == 1) {  // first time adjacent to the interface
-                interface_point = {i, j};
-                found = true;
-                break;
+            // repeat until adjacent to the interface
+            if (interface_location[i][j] == 0 && !found_interface) {
+                continue;
             }
-        }
-    }
-
-    // repeat until not adjacent to the interface, but the previous one was adjacent
-    std::array<int, 2> starting_point{};
-    found = false;
-    for (int i = interface_point[0]; i > 1 && !found; i--) {
-        for (int j = interface_point[1]; j < nCells + 2; j++) {
-            if (interface_location[i][j] == 0) {  // first time not adjacent to the interface
-                starting_point = {i, j};
-                found = true;
-                break;
-            }
-        }
-    }
-
-    // start sweeping
-    for (int i = starting_point[0]; i > 1; i--) {
-        for (int j = starting_point[1]; j < nCells + 2; j++) {
-            if (interface_location[i][j] == 0) {  // only update if not adjacent to the interface
+            found_interface = true;
+            // start sweeping
+            if (interface_location[i][j] == 0) {
                 update(phi, i, j, dx, dy);
             }
         }
@@ -171,36 +144,16 @@ void sweep2(std::vector<std::vector<double>>& phi, const std::vector<std::vector
 void sweep3(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
     const int nCells, const double dx, const double dy) {
 
-    // repeat until adjacent to the interface
-    std::array<int, 2> interface_point{};
-    bool found = false;
-    for (int i = nCells + 1; i > 1 && !found; i--) {
+    bool found_interface = false;
+    for (int i = nCells + 1; i > 1; i--) {
         for (int j = nCells + 1; j > 1; j--) {
-            if (interface_location[i][j] == 1) {  // first time adjacent to the interface
-                interface_point = {i, j};
-                found = true;
-                break;
+            // repeat until adjacent to the interface
+            if (interface_location[i][j] == 0 && !found_interface) {
+                continue;
             }
-        }
-    }
-
-    // repeat until not adjacent to the interface, but the previous one was adjacent
-    std::array<int, 2> starting_point{};
-    found = false;
-    for (int i = interface_point[0]; i > 1 && !found; i--) {
-        for (int j = interface_point[1]; j > 1; j--) {
-            if (interface_location[i][j] == 0) {  // first time not adjacent to the interface
-                starting_point = {i, j};
-                found = true;
-                break;
-            }
-        }
-    }
-
-    // start sweeping
-    for (int i = starting_point[0]; i > 1; i--) {
-        for (int j = starting_point[1]; j > 1; j--) {
-            if (interface_location[i][j] == 0) {  // only update if not adjacent to the interface
+            found_interface = true;
+            // start sweeping
+            if (interface_location[i][j] == 0) {
                 update(phi, i, j, dx, dy);
             }
         }
@@ -212,36 +165,16 @@ void sweep3(std::vector<std::vector<double>>& phi, const std::vector<std::vector
 void sweep4(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
     const int nCells, const double dx, const double dy) {
 
-    // repeat until adjacent to the interface
-    std::array<int, 2> interface_point{};
-    bool found = false;
-    for (int i = 2; i < nCells + 2 && !found; i++) {
+    bool found_interface = false;
+    for (int i = 2; i < nCells + 2; i++) {
         for (int j = nCells + 1; j > 1; j--) {
-            if (interface_location[i][j] == 1) {  // first time adjacent to the interface
-                interface_point = {i, j};
-                found = true;
-                break;
+            // repeat until adjacent to the interface
+            if (interface_location[i][j] == 0 && !found_interface) {
+                continue;
             }
-        }
-    }
-
-    // repeat until not adjacent to the interface, but the previous one was adjacent
-    std::array<int, 2> starting_point{};
-    found = false;
-    for (int i = interface_point[0]; i < nCells + 2 && !found; i++) {
-        for (int j = interface_point[1]; j > 1; j--) {
-            if (interface_location[i][j] == 0) {  // first time not adjacent to the interface
-                starting_point = {i, j};
-                found = true;
-                break;
-            }
-        }
-    }
-
-    // start sweeping
-    for (int i = starting_point[0]; i < nCells + 2; i++) {
-        for (int j = starting_point[1]; j > 1; j--) {
-            if (interface_location[i][j] == 0) {  // only update if not adjacent to the interface
+            found_interface = true;
+            // start sweeping
+            if (interface_location[i][j] == 0) {
                 update(phi, i, j, dx, dy);
             }
         }

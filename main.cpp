@@ -34,11 +34,12 @@ int main() {
     std::vector phi(nCells + 4, std::vector<double>(nCells + 4));
 
     // parameters that change in experiments
-    int case_id = 1;  // test id
+    int case_id = 2;  // test id
     double tStop = 0.25;  // simulation time
     double gama_1 = 1.4, gama_2 = 1.4;  // parameter for EoS
     double p_inf_1 = 0.0, p_inf_2 = 0.0;  // parameter for the stiffened gas EoS
-    double epsilon = 1e-10;  // stop criterion for the pressure iteration in the exact Riemann solver
+    double epsilon = 1e-20;  // stop criterion for the pressure iteration in the exact Riemann solver
+    double huge = 10000.0;  // a large value for initialization of fast sweeping and constant extrapolation
 
     // initial data
     for (int i = 2; i < nCells + 2; i++) {
@@ -62,6 +63,12 @@ int main() {
                 if (y <= 0.5) {u_ij = {1.0, 0.0, 0.0, 1.0};}
                 else {u_ij = {0.125, 0.0, 0.0, 0.1};}
                 phi_i = y - 0.5;
+            }
+            // Case 3: Cylindrical Explosion Test
+            if (case_id == 3) {
+                if (std::sqrt(pow(x - 1.0, 2) + pow(y - 1.0, 2)) <= 0.4) {u_ij = {1.0, 0.0, 0.0, 1.0};}
+                else {u_ij = {0.125, 0.0, 0.0, 0.1};}
+                phi_i = std::sqrt(pow(x - 1.0, 2) + pow(y - 1.0, 2)) - 0.4;
             }
 
             // transform from primitive to conservative
@@ -120,7 +127,7 @@ int main() {
 
         //**********************************************************************************//
         // level set function reinitialization
-        fastSweeping(phi, interface_location, nCells, dx, dy);
+        fastSweeping(phi, interface_location, nCells, dx, dy, huge);
         // transmissive boundary condition
         setLevelSetBoundaryCondition(phi, nCells);
 
@@ -150,11 +157,11 @@ int main() {
             }
         }
 
-        // populate ghost fluid regions
-        constantExtrapolation(u1, phi, interface_location, nCells, dx, dy, true);  // ghost fluid region phi > 0, phi_positive = true
-        constantExtrapolation(u2, phi, interface_location, nCells, dx, dy, false);  // ghost fluid region phi < 0, phi_positive = false
-        setBoundaryCondition(u1, nCells);
-        setBoundaryCondition(u2, nCells);
+        // // populate ghost fluid regions
+        // constantExtrapolation(u1, phi, interface_location, nCells, dx, dy, true, huge);  // ghost fluid region phi > 0, phi_positive = true
+        // constantExtrapolation(u2, phi, interface_location, nCells, dx, dy, false, huge);  // ghost fluid region phi < 0, phi_positive = false
+        // setBoundaryCondition(u1, nCells);
+        // setBoundaryCondition(u2, nCells);
 
 
         //**********************************************************************************//
@@ -179,7 +186,10 @@ int main() {
                 double vx_i = temp_u_prim[1], vy_i = temp_u_prim[2];
                 double phiBar_ij = levelSetUpdate(phi, i, j, vx_i, vy_i, dx, dy, dt);
                 phiPlus1[i][j] = phiBar_ij;
-                // std::cout << i << " " << j << " " << phi[i][j] << " " << phiPlus1[i][j] << std::endl;
+                // if (std::abs(phiBar_ij) > 1) {
+                //     std::cout << i << " " << j << " " << phi[i][j] << " " << phiBar_ij << std::endl;
+                //     assert(false);
+                // }
             }
         }
         // transmissive boundary condition

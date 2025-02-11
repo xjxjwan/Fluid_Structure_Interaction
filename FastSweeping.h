@@ -8,7 +8,7 @@
 #include <vector>
 
 void fastSweeping(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
-    int nCells, double dx, double dy);
+    int nCells, double dx, double dy, double huge);
 
 void sweep1(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
     int nCells, double dx, double dy);
