@@ -10,10 +10,10 @@ import os
 
 
 ## Global Parameters ##
-case_id = 2
+case_id = 3
 nCells = 100
-x0, x1 = 0.0, 1.0
-y0, y1 = 0.0, 1.0
+x0, x1 = 0.0, 2.0
+y0, y1 = 0.0, 2.0
 dx = (x1 - x0) / nCells
 dy = (y1 - y0) / nCells
 
