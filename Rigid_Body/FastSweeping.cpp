@@ -10,9 +10,10 @@
 
 
 void fastSweeping(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
-    const int nCells, const double dx, const double dy, const double huge) {
+    const int nCells, const double dx, const double dy) {
 
     // Remove all values not adjacent to interface
+    double huge = 10000.0;
     for (int i = 0; i < nCells + 4; i++) {
         for (int j = 0; j < nCells + 4; j++) {
             if (interface_location[i][j] == 0) {  // not adjacent to interface

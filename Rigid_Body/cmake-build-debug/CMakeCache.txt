@@ -157,7 +157,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=Rigid_Body
+CMAKE_PROJECT_NAME:STATIC=WorkSpace
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=E:/CLion/CLion 2024.2.2/bin/mingw/bin/ranlib.exe
@@ -250,6 +250,15 @@ Rigid_Body_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 Rigid_Body_SOURCE_DIR:STATIC=D:/Study_Master/WrittenAssignment/WorkSpace/Rigid_Body
+
+//Value Computed by CMake
+WorkSpace_BINARY_DIR:STATIC=D:/Study_Master/WrittenAssignment/WorkSpace/Rigid_Body/cmake-build-debug
+
+//Value Computed by CMake
+WorkSpace_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+WorkSpace_SOURCE_DIR:STATIC=D:/Study_Master/WrittenAssignment/WorkSpace/Rigid_Body
 
 
 ########################

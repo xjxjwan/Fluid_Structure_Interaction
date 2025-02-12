@@ -51,16 +51,16 @@ void updateU(std::vector<std::vector<std::array<double, 4>>>& u, const std::vect
     const std::array cur_u = u[i][j];
     const std::vector<double> normal_vector = func_calNormalVector(phi, i, j, dx, dy);
     double n_x = normal_vector[0], n_y = normal_vector[1];
-    if (std::abs(n_y) < 1.25 * dy) {
-        n_x = n_x / std::abs(n_x);
-        n_y = 0;
-    }
-    if (std::abs(n_x) < 1.25 * dx) {
-        n_x = 0;
-        n_y = n_y / std::abs(n_y);
-    }
-    double coeff_x = n_x / dx;
-    double coeff_y = n_y / dy;
+    // if (std::abs(n_y) < 1.25 * dy) {
+    //     n_x = n_x / std::abs(n_x);
+    //     n_y = 0;
+    // }
+    // if (std::abs(n_x) < 1.25 * dx) {
+    //     n_x = 0;
+    //     n_y = n_y / std::abs(n_y);
+    // }
+    double coeff_x = std::abs(n_x) / dx;
+    double coeff_y = std::abs(n_y) / dy;
 
     const double cur_phi = phi[i][j];
     std::array<double, 4> u_x, u_y;
@@ -82,9 +82,6 @@ void updateU(std::vector<std::vector<std::array<double, 4>>>& u, const std::vect
         double q_x = u_x[k], q_y = u_y[k];
 
         double q_hat = (coeff_x * q_x + coeff_y * q_y) / (coeff_x + coeff_y);
-        if (coeff_x + coeff_y == 0) {
-            assert(false);
-        }
         if (std::abs(q_hat) < std::abs(cur_u[k])) {
             u[i][j][k] = q_hat;
         }

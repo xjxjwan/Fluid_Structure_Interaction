@@ -39,7 +39,6 @@ int main() {
     double gama_1 = 1.4, gama_2 = 1.4;  // parameter for EoS
     double p_inf_1 = 0.0, p_inf_2 = 0.0;  // parameter for the stiffened gas EoS
     double epsilon = 1e-20;  // stop criterion for the pressure iteration in the exact Riemann solver
-    double huge = 10000.0;  // a large value for initialization of fast sweeping and constant extrapolation
 
     // initial data
     for (int i = 2; i < nCells + 2; i++) {
@@ -127,7 +126,7 @@ int main() {
 
         //**********************************************************************************//
         // level set function reinitialization
-        fastSweeping(phi, interface_location, nCells, dx, dy, huge);
+        fastSweeping(phi, interface_location, nCells, dx, dy);
         // transmissive boundary condition
         setLevelSetBoundaryCondition(phi, nCells);
 
@@ -157,11 +156,11 @@ int main() {
             }
         }
 
-        // // populate ghost fluid regions
-        // constantExtrapolation(u1, u2, phi, interface_location, nCells, dx, dy, true);  // ghost fluid region phi > 0, phi_positive = true
-        // constantExtrapolation(u2, u1, phi, interface_location, nCells, dx, dy, false);  // ghost fluid region phi < 0, phi_positive = false
-        // setBoundaryCondition(u1, nCells);
-        // setBoundaryCondition(u2, nCells);
+        // populate ghost fluid regions
+        constantExtrapolation(u1, u2, phi, interface_location, nCells, dx, dy, true);  // ghost fluid region phi > 0, phi_positive = true
+        constantExtrapolation(u2, u1, phi, interface_location, nCells, dx, dy, false);  // ghost fluid region phi < 0, phi_positive = false
+        setBoundaryCondition(u1, nCells);
+        setBoundaryCondition(u2, nCells);
 
 
         //**********************************************************************************//

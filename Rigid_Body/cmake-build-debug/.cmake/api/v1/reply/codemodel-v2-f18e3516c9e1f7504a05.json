@@ -27,7 +27,7 @@
 					[
 						0
 					],
-					"name" : "Rigid_Body",
+					"name" : "WorkSpace",
 					"targetIndexes" : 
 					[
 						0
@@ -38,9 +38,9 @@
 			[
 				{
 					"directoryIndex" : 0,
-					"id" : "Rigid_Body::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-Rigid_Body-Debug-06e5982fe6863a02c63e.json",
-					"name" : "Rigid_Body",
+					"id" : "WorkSpace::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-WorkSpace-Debug-a6780f909f2f5591296f.json",
+					"name" : "WorkSpace",
 					"projectIndex" : 0
 				}
 			]
