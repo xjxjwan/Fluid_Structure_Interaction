@@ -50,7 +50,7 @@ void updateU(std::vector<std::vector<std::array<double, 4>>>& u, const std::vect
 
     const std::array cur_u = u[i][j];
     const std::vector<double> normal_vector = func_calNormalVector(phi, i, j, dx, dy);
-    const double n_x = normal_vector[0], n_y = normal_vector[1];
+    double n_x = normal_vector[0], n_y = normal_vector[1];
 
     // if (std::abs(n_y) < 1.25 * dy) {
     //     n_x = n_x / std::abs(n_x);

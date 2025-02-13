@@ -85,6 +85,12 @@ build CMakeFiles/WorkSpace.dir/CalFlux.cpp.obj: CXX_COMPILER__WorkSpace_unscanne
   OBJECT_DIR = CMakeFiles\WorkSpace.dir
   OBJECT_FILE_DIR = CMakeFiles\WorkSpace.dir
 
+build CMakeFiles/WorkSpace.dir/FastSweeping.cpp.obj: CXX_COMPILER__WorkSpace_unscanned_Debug D$:/Study_Master/WrittenAssignment/WorkSpace/Rigid_Body/FastSweeping.cpp || cmake_object_order_depends_target_WorkSpace
+  DEP_FILE = CMakeFiles\WorkSpace.dir\FastSweeping.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\WorkSpace.dir
+  OBJECT_FILE_DIR = CMakeFiles\WorkSpace.dir
+
 build CMakeFiles/WorkSpace.dir/SetDomainBoundary.cpp.obj: CXX_COMPILER__WorkSpace_unscanned_Debug D$:/Study_Master/WrittenAssignment/WorkSpace/Rigid_Body/SetDomainBoundary.cpp || cmake_object_order_depends_target_WorkSpace
   DEP_FILE = CMakeFiles\WorkSpace.dir\SetDomainBoundary.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
@@ -93,12 +99,6 @@ build CMakeFiles/WorkSpace.dir/SetDomainBoundary.cpp.obj: CXX_COMPILER__WorkSpac
 
 build CMakeFiles/WorkSpace.dir/LevelSetFunctions.cpp.obj: CXX_COMPILER__WorkSpace_unscanned_Debug D$:/Study_Master/WrittenAssignment/WorkSpace/Rigid_Body/LevelSetFunctions.cpp || cmake_object_order_depends_target_WorkSpace
   DEP_FILE = CMakeFiles\WorkSpace.dir\LevelSetFunctions.cpp.obj.d
-  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\WorkSpace.dir
-  OBJECT_FILE_DIR = CMakeFiles\WorkSpace.dir
-
-build CMakeFiles/WorkSpace.dir/FastSweeping.cpp.obj: CXX_COMPILER__WorkSpace_unscanned_Debug D$:/Study_Master/WrittenAssignment/WorkSpace/Rigid_Body/FastSweeping.cpp || cmake_object_order_depends_target_WorkSpace
-  DEP_FILE = CMakeFiles\WorkSpace.dir\FastSweeping.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\WorkSpace.dir
   OBJECT_FILE_DIR = CMakeFiles\WorkSpace.dir
@@ -121,6 +121,18 @@ build CMakeFiles/WorkSpace.dir/AuxiliaryFunctions.cpp.obj: CXX_COMPILER__WorkSpa
   OBJECT_DIR = CMakeFiles\WorkSpace.dir
   OBJECT_FILE_DIR = CMakeFiles\WorkSpace.dir
 
+build CMakeFiles/WorkSpace.dir/Initialization.cpp.obj: CXX_COMPILER__WorkSpace_unscanned_Debug D$:/Study_Master/WrittenAssignment/WorkSpace/Rigid_Body/Initialization.cpp || cmake_object_order_depends_target_WorkSpace
+  DEP_FILE = CMakeFiles\WorkSpace.dir\Initialization.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\WorkSpace.dir
+  OBJECT_FILE_DIR = CMakeFiles\WorkSpace.dir
+
+build CMakeFiles/WorkSpace.dir/RigidBodyFunctions.cpp.obj: CXX_COMPILER__WorkSpace_unscanned_Debug D$:/Study_Master/WrittenAssignment/WorkSpace/Rigid_Body/RigidBodyFunctions.cpp || cmake_object_order_depends_target_WorkSpace
+  DEP_FILE = CMakeFiles\WorkSpace.dir\RigidBodyFunctions.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\WorkSpace.dir
+  OBJECT_FILE_DIR = CMakeFiles\WorkSpace.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target WorkSpace
@@ -129,7 +141,7 @@ build CMakeFiles/WorkSpace.dir/AuxiliaryFunctions.cpp.obj: CXX_COMPILER__WorkSpa
 #############################################
 # Link the executable WorkSpace.exe
 
-build WorkSpace.exe: CXX_EXECUTABLE_LINKER__WorkSpace_Debug CMakeFiles/WorkSpace.dir/main.cpp.obj CMakeFiles/WorkSpace.dir/RiemannSolver.cpp.obj CMakeFiles/WorkSpace.dir/DataReconstruct.cpp.obj CMakeFiles/WorkSpace.dir/CalTimeStep.cpp.obj CMakeFiles/WorkSpace.dir/HalfTimeStepUpdate.cpp.obj CMakeFiles/WorkSpace.dir/CalFlux.cpp.obj CMakeFiles/WorkSpace.dir/SetDomainBoundary.cpp.obj CMakeFiles/WorkSpace.dir/LevelSetFunctions.cpp.obj CMakeFiles/WorkSpace.dir/FastSweeping.cpp.obj CMakeFiles/WorkSpace.dir/ConstantExtrapolation.cpp.obj CMakeFiles/WorkSpace.dir/RiemannGFM.cpp.obj CMakeFiles/WorkSpace.dir/AuxiliaryFunctions.cpp.obj
+build WorkSpace.exe: CXX_EXECUTABLE_LINKER__WorkSpace_Debug CMakeFiles/WorkSpace.dir/main.cpp.obj CMakeFiles/WorkSpace.dir/RiemannSolver.cpp.obj CMakeFiles/WorkSpace.dir/DataReconstruct.cpp.obj CMakeFiles/WorkSpace.dir/CalTimeStep.cpp.obj CMakeFiles/WorkSpace.dir/HalfTimeStepUpdate.cpp.obj CMakeFiles/WorkSpace.dir/CalFlux.cpp.obj CMakeFiles/WorkSpace.dir/FastSweeping.cpp.obj CMakeFiles/WorkSpace.dir/SetDomainBoundary.cpp.obj CMakeFiles/WorkSpace.dir/LevelSetFunctions.cpp.obj CMakeFiles/WorkSpace.dir/ConstantExtrapolation.cpp.obj CMakeFiles/WorkSpace.dir/RiemannGFM.cpp.obj CMakeFiles/WorkSpace.dir/AuxiliaryFunctions.cpp.obj CMakeFiles/WorkSpace.dir/Initialization.cpp.obj CMakeFiles/WorkSpace.dir/RigidBodyFunctions.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\WorkSpace.dir

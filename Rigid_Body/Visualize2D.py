@@ -10,7 +10,7 @@ import os
 
 
 ## Global Parameters ##
-case_id = 1
+case_id = 4
 nCells = 100
 x0, x1 = 0.0, 1.0
 y0, y1 = 0.0, 1.0
@@ -71,8 +71,8 @@ def visualize_single(cur_ax, var_id, ite):
     data_list = [rho, vx, vy, p]
 
     # Define the actual coordinate values for ticks
-    x_ticks = np.linspace(x0, x1, 10).round(1)
-    y_ticks = np.linspace(y0, y1, 10).round(1)
+    x_ticks = np.linspace(x0, x1, 11).round(1)
+    y_ticks = np.linspace(y0, y1, 11).round(1)
     y_ticks = np.flipud(y_ticks)
     
     # visualization
@@ -80,13 +80,13 @@ def visualize_single(cur_ax, var_id, ite):
     data = data_list[var_id]
     sns.heatmap(data, ax=cur_ax, cbar=True)
 
-    cur_ax.set_title(label_list[var_id] + ", Time = %.3fs" % time)
+    cur_ax.set_title(label_list[var_id] + ", Time = %.1fs" % time)
     cur_ax.set_xlabel('X')
     cur_ax.set_ylabel('Y')
 
     # change coordinates
-    xtick_positions = np.linspace(0, nCells - 1, 10)
-    ytick_positions = np.linspace(0, nCells - 1, 10)
+    xtick_positions = np.linspace(0, nCells, 11)
+    ytick_positions = np.linspace(0, nCells, 11)
 
     cur_ax.set_xticks(xtick_positions)
     cur_ax.set_xticklabels(x_ticks)
@@ -94,8 +94,9 @@ def visualize_single(cur_ax, var_id, ite):
     cur_ax.set_yticks(ytick_positions)
     cur_ax.set_yticklabels(y_ticks)
     
-    # plt.tight_layout()
+    # cur_ax.grid(alpha = 0.1)
     # plt.pause(0.01)
+    plt.savefig("res/case_%d_%s.png" % (case_id, label_list[var_id]))
     plt.show()
 
 
@@ -104,7 +105,7 @@ if __name__ == "__main__":
     # var_id: 0-Density, 1-VelocityX, 2-VelocityY, 3-Pressure
     visualize_single(ax, 0, ites[-1])
     
-    # animation
+    # # animation
     # for ite in ites:
-    #     visualize_single(ite)
+    #     visualize_single(ax, 0, ite)
 

@@ -63,7 +63,9 @@
 				15,
 				17,
 				19,
-				21
+				21,
+				23,
+				25
 			]
 		}
 	],
@@ -111,7 +113,9 @@
 				15,
 				17,
 				19,
-				21
+				21,
+				23,
+				25
 			]
 		},
 		{
@@ -128,7 +132,9 @@
 				16,
 				18,
 				20,
-				22
+				22,
+				24,
+				26
 			]
 		}
 	],
@@ -198,6 +204,17 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
+			"path" : "FastSweeping.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "FastSweeping.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
 			"path" : "SetDomainBoundary.cpp",
 			"sourceGroupIndex" : 0
 		},
@@ -215,17 +232,6 @@
 		{
 			"backtrace" : 1,
 			"path" : "LevelSetFunctions.h",
-			"sourceGroupIndex" : 1
-		},
-		{
-			"backtrace" : 1,
-			"compileGroupIndex" : 0,
-			"path" : "FastSweeping.cpp",
-			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"path" : "FastSweeping.h",
 			"sourceGroupIndex" : 1
 		},
 		{
@@ -259,6 +265,28 @@
 		{
 			"backtrace" : 1,
 			"path" : "AuxiliaryFunctions.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "Initialization.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Initialization.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "RigidBodyFunctions.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "RigidBodyFunctions.h",
 			"sourceGroupIndex" : 1
 		}
 	],

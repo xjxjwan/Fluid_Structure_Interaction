@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <cassert>
+
 
 double computeTimeStep(const std::vector<std::vector<std::array<double, 4>>>& u1, const double& C, const double& dx,
     const double& dy, const double& gama, const double& p_inf) {
@@ -24,5 +26,10 @@ double computeTimeStep(const std::vector<std::vector<std::array<double, 4>>>& u1
     const auto max_iter = std::max_element(a_list.begin(), a_list.end());
     const double timeStep = C * std::min(dx, dy) / *max_iter;
 
+    if (std::isnan(timeStep)) {
+        assert(false);
+    }
+
     return timeStep;
 }
+

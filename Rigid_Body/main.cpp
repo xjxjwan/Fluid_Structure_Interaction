@@ -11,113 +11,31 @@
 #include "CalTimeStep.H"
 #include "ConstantExtrapolation.H"
 #include "DataReconstruct.H"
-#include "FastSweeping.H"
 #include "HalfTimeStepUpdate.H"
+#include "Initialization.h"
 #include "LevelSetFunctions.H"
 #include "RiemannGFM.H"
+#include "RigidBodyFunctions.H"
 #include "SetDomainBoundary.H"
-
-
-void InitializeU(std::vector<std::vector<std::array<double, 4>>>& u, const double gama, const double p_inf,
-    const int nCells, const double x0, const double y0, const double dx, const double dy, const int case_id) {
-
-    // Case 1: Shock wave interact with circle
-    if (case_id == 1) {
-        for (int i = 2; i < nCells + 2; i++) {
-            for (int j = 2; j < nCells + 2; j++) {
-
-                // get coordinates and initial values
-                const double x = x0 + (i - 1.5) * dx;
-                std::array<double, 4> u_ij;
-                if (x <= 0.2) {u_ij = {1.3764, 0.394, 0.0, 1.5698};}
-                else {u_ij = {1.0, 0.0, 0.0, 1.0};}
-
-                // transform from primitive to conservative
-                u[i][j] = prim2cons(u_ij, gama, p_inf);
-            }
-        }
-        // set transmissive boundary condition
-        setBoundaryCondition(u, nCells);
-    }
-}
-
-
-std::vector<std::vector<double>> calLevelSet(const std::array<double, 2>& v_rigid, const int nCells,
-    const double x0, const double y0, const double dx, const double dy, const int case_id) {
-
-    std::vector phi(nCells + 4, std::vector<double>(nCells + 4));
-
-    // Case 1: Shock wave interact with circle
-    if (case_id == 1) {
-        for (int i = 2; i < nCells + 2; i++) {
-            for (int j = 2; j < nCells + 2; j++) {
-                const double x = x0 + (i - 1.5) * dx;
-                const double y = y0 + (j - 1.5) * dy;
-                phi[i][j] = std::sqrt(pow(x - 0.6, 2) + pow(y - 0.5, 2)) - 0.2;
-            }
-        }
-        // set transmissive boundary condition
-        setLevelSetBoundaryCondition(phi, nCells);
-    }
-
-    return phi;
-}
-
-
-std::array<double, 2> getRigidVelocity(const int case_id) {
-
-    std::array<double, 2> v_rigid;
-
-    // Case 1: Shock wave interact with circle
-    if (case_id == 1) {
-        v_rigid[0] = 0.0;
-        v_rigid[1] = 0.0;
-    }
-
-    return v_rigid;
-}
-
-
-std::vector<std::vector<int>> locate_interface(const std::vector<std::vector<double>>& phi, const int nCells) {
-
-    std::vector interface_location(nCells + 4, std::vector<int>(nCells + 4));
-
-    bool found = false;
-    for (int i = 2; i < nCells + 2; i++) {
-        for (int j = 2; j < nCells + 2; j++) {
-            const double cur_phi = phi[i][j];
-            const double phi_up = phi[i][j + 1], phi_down = phi[i][j - 1], phi_right = phi[i + 1][j], phi_left = phi[i - 1][j];
-            if (cur_phi * phi_up < 0 or cur_phi * phi_down < 0 or cur_phi * phi_right < 0 or cur_phi * phi_left < 0) {
-                interface_location[i][j] = 1;
-                found = true;
-            }
-        }
-    }
-    if (!found) {assert(false);}  // debug: no interface
-
-    return interface_location;
-}
 
 
 int main() {
 
     // parameters
-    int nCells = 100;
-    double C = 0.8;
-    double tStart = 0.0;
+    int nCells = 100; double C = 0.8; double tStart = 0.0;
     std::vector<std::vector<std::array<double, 4>>> u{};  // 4 ghost cells
     u.resize(nCells + 4, std::vector<std::array<double, 4>>(nCells + 4));
+    double gama = 1.4;  // parameter for EoS
+    double p_inf = 0.0;  // parameter for the stiffened gas EoS
+    double epsilon = 1e-20;  // stop criterion for the pressure iteration in the exact Riemann solver
 
-    // parameters that change in experiments
+    // parameters that change across experiments
     int case_id = 1;
     double x0 = 0.0, y0 = 0.0;
     double x1 = 1.0, y1 = 1.0;
     double dx = (x1 - x0) / nCells;
     double dy = (y1 - y0) / nCells;
     double tStop = 0.4;  // simulation time
-    double gama = 1.4;  // parameter for EoS
-    double p_inf = 0.0;  // parameter for the stiffened gas EoS
-    double epsilon = 1e-20;  // stop criterion for the pressure iteration in the exact Riemann solver
 
     // initialize u
     InitializeU(u, gama, p_inf, nCells, x0, y0, dx, dy, case_id);
@@ -177,7 +95,6 @@ int main() {
                 uBarR[i][j] = u1BarX_ij[1];
             }
         }
-
         // transmissive boundary condition
         setBoundaryCondition(uBarL, nCells); setBoundaryCondition(uBarR, nCells);
 
@@ -206,7 +123,6 @@ int main() {
                 }
             }
         }
-
         // transmissive boundary condition
         setBoundaryCondition(uTempPlus1, nCells);
         u = uTempPlus1;
@@ -222,7 +138,6 @@ int main() {
                 uBarU[i][j] = u1BarY_ij[1];
             }
         }
-
         // transmissive boundary condition
         setBoundaryCondition(uBarD, nCells); setBoundaryCondition(uBarU, nCells);
 
@@ -251,17 +166,16 @@ int main() {
                 }
             }
         }
-
         // transmissive boundary condition
         setBoundaryCondition(uPlus1, nCells);
 
-        // data update
+
+        //**********************************************************************************//
+        // update and record
         u = uPlus1;
         counter++;
 
-
-        //**********************************************************************************//
-        // transform
+        // transform from cons to prim
         std::vector<std::vector<std::array<double, 4>>> u_prim;
         u_prim.resize(nCells + 4, std::vector<std::array<double, 4>>(nCells + 4));
         for (int i = 0; i < nCells + 4; i++) {

@@ -14,16 +14,21 @@ add_executable(WorkSpace main.cpp
         HalfTimeStepUpdate.h
         CalFlux.cpp
         CalFlux.h
+        FastSweeping.cpp
+        FastSweeping.h
         SetDomainBoundary.cpp
         SetDomainBoundary.h
         LevelSetFunctions.cpp
         LevelSetFunctions.h
-        FastSweeping.cpp
-        FastSweeping.h
         ConstantExtrapolation.cpp
         ConstantExtrapolation.h
         RiemannGFM.cpp
         RiemannGFM.h
         AuxiliaryFunctions.cpp
         AuxiliaryFunctions.h
+        Initialization.cpp
+        Initialization.h
+        RigidBodyFunctions.cpp
+        RigidBodyFunctions.h
+        Initialization.cpp
 )

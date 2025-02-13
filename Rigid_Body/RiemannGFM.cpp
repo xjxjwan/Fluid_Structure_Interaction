@@ -107,11 +107,12 @@ std::array<double, 4> func_solveRiemannProblem(const std::vector<std::vector<std
 
     // determine left state (rigid body, phi < 0)
     double rho_l = 0.0, vn_l = 0.0, p_l = 0.0;
-    if (case_id == 1) {
+    if (case_id == 1 || case_id == 2 || case_id == 3 || case_id == 4) {
         rho_l = rho_r;
         vn_l = -vn_r;
         p_l = p_r;
     }
+    if (rho_l == 0.0) {assert(false);}
 
     // get initial states for the Riemann problem
     std::array l_state = {rho_l, vn_l, p_l};  // only use normal velocity
