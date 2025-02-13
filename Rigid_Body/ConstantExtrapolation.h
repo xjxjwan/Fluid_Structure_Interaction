@@ -9,24 +9,24 @@
 #include <array>
 #include "AuxiliaryFunctions.h"
 
-void constantExtrapolation(std::vector<std::vector<std::array<double, 4>>>& u, std::vector<std::vector<std::array<double, 4>>>& u_other,
+void constantExtrapolation(std::vector<std::vector<std::array<double, 4>>>& u,
     const std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
-    int nCells, double dx, double dy, bool phi_positive);
+    int nCells, double dx, double dy);
 
 void sweep1(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
     const std::vector<std::vector<int>>& interface_location,
-    int nCells, double dx, double dy, bool phi_positive);
+    int nCells, double dx, double dy);
 
 void sweep2(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
     const std::vector<std::vector<int>>& interface_location,
-    int nCells, double dx, double dy, bool phi_positive);
+    int nCells, double dx, double dy);
 
 void sweep3(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
     const std::vector<std::vector<int>>& interface_location,
-    int nCells, double dx, double dy, bool phi_positive);
+    int nCells, double dx, double dy);
 
 void sweep4(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
     const std::vector<std::vector<int>>& interface_location,
-    int nCells, double dx, double dy, bool phi_positive);
+    int nCells, double dx, double dy);
 
 #endif //ANTEXTRAPOLATION_H
