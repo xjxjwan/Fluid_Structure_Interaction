@@ -4,4 +4,5 @@ Structure:
 1. 2D_RiemannGFM: 2D Riemann problem-based GFM, with visualize2D.py for simulation results visualization.
 2. 1D_RiemannGFM: 1D Riemann problem-based GFM, with visualize.py.
 3. 2D_SLIC_FORCE: 2D second-order (SLIC+FORCE) solver (single material).
-4. In each folder, the 'res' folder contains simulation results, including simulation data and figures.
+4. Rigid_Body: 2D Riemann problem-based GFM-like method for simulating fluid interaction with rigid body.
+5. In each folder, the 'res' folder contains simulation results, including simulation data and figures.
