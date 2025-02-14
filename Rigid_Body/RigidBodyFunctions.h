@@ -8,6 +8,6 @@
 #include <vector>
 #include <array>
 
-std::array<double, 2> getRigidVelocity(int case_id);
+std::vector<std::array<double, 2>> getRigidState(int case_id, double t, double tStop);
 
 #endif //RIGIDBODYFUNCTIONS_H

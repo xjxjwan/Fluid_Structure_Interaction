@@ -25,10 +25,10 @@ int main() {
     double C = 0.8; double tStart = 0.0;
     double gama = 1.4;  // parameter for EoS
     double p_inf = 0.0;  // parameter for the stiffened gas EoS
-    double epsilon = 1e-20;  // stop criterion for the pressure iteration in the exact Riemann solver
+    double epsilon = 1e-8;  // stop criterion for the pressure iteration in the exact Riemann solver
 
     // parameters that change across experiments
-    int case_id = 5;
+    int case_id = 7;
     int nCellsX = 0, nCellsY = 0;
     std::vector<std::vector<std::array<double, 4>>> u{};  // 4 ghost cells
     double x0 = 0.0, y0 = 0.0, x1 = 0.0, y1 = 0.0;  // simulation range
@@ -46,6 +46,13 @@ int main() {
         func_resize(u, nCellsX + 4, nCellsY + 4);
         x0 = 0.0, y0 = 0.0;
         x1 = 2.0, y1 = 1.0;
+        tStop = 1.0;
+    }
+    if (case_id == 7) {
+        nCellsX = 100, nCellsY = 100;
+        func_resize(u, nCellsX + 4, nCellsY + 4);
+        x0 = 0.0, y0 = 0.0;
+        x1 = 1.0, y1 = 1.0;
         tStop = 1.0;
     }
     double dx = (x1 - x0) / nCellsX;
@@ -72,8 +79,10 @@ int main() {
 
         //**********************************************************************************//
         // calculate level set function and locate interface
-        std::array<double, 2> v_rigid = getRigidVelocity(case_id);
-        std::vector<std::vector<double>> phi = calLevelSet(v_rigid, t, nCellsX, nCellsY, x0, y0, dx, dy, case_id);
+        std::vector<std::array<double, 2>> rigid_state = getRigidState(case_id, t, tStop);
+        std::array<double, 2> rigid_center = rigid_state[0];
+        std::array<double, 2> v_rigid = rigid_state[1];
+        std::vector<std::vector<double>> phi = calLevelSet(rigid_center, nCellsX, nCellsY, x0, y0, dx, dy, case_id);
         std::vector<std::vector<int>> interface_location = locate_interface(phi, nCellsX, nCellsY);
 
 
@@ -89,7 +98,7 @@ int main() {
         }
         // populate ghost fluid region
         constantExtrapolation(u, phi, interface_location, nCellsX, nCellsY, dx, dy);
-        setBoundaryCondition(u, nCellsX, nCellsY);
+        setBoundaryCondition(u, nCellsX, nCellsY, case_id);
 
 
         //**********************************************************************************//
@@ -110,8 +119,8 @@ int main() {
             }
         }
         // transmissive boundary condition
-        setBoundaryCondition(uBarL, nCellsX, nCellsY);
-        setBoundaryCondition(uBarR, nCellsX, nCellsY);
+        setBoundaryCondition(uBarL, nCellsX, nCellsY, case_id);
+        setBoundaryCondition(uBarR, nCellsX, nCellsY, case_id);
 
         // half-time-step update in x-direction
         for (int i = 0; i < nCellsX + 4; i++) {
@@ -139,7 +148,7 @@ int main() {
             }
         }
         // transmissive boundary condition
-        setBoundaryCondition(uTempPlus1, nCellsX, nCellsY);
+        setBoundaryCondition(uTempPlus1, nCellsX, nCellsY, case_id);
         u = uTempPlus1;
 
 
@@ -154,8 +163,8 @@ int main() {
             }
         }
         // transmissive boundary condition
-        setBoundaryCondition(uBarD, nCellsX, nCellsY);
-        setBoundaryCondition(uBarU, nCellsX, nCellsY);
+        setBoundaryCondition(uBarD, nCellsX, nCellsY, case_id);
+        setBoundaryCondition(uBarU, nCellsX, nCellsY, case_id);
 
         // half-time-step update in y-direction
         for (int i = 0; i < nCellsX + 4; i++) {
@@ -183,7 +192,7 @@ int main() {
             }
         }
         // transmissive boundary condition
-        setBoundaryCondition(uPlus1, nCellsX, nCellsY);
+        setBoundaryCondition(uPlus1, nCellsX, nCellsY, case_id);
 
 
         //**********************************************************************************//

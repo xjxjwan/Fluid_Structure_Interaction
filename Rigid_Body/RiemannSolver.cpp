@@ -62,8 +62,12 @@ void RiemannSolver::CalCentralPressure(double gama_l, double gama_r, double p_in
         p_star = p_star - 0.1 * f / df;
         iter_num++;
         // std::cout << iter_num << ": " << p_l << " " << p_star_last << std::endl;
-    } while (std::abs(p_star - p_star_last) / p_star_last > stop_criteria);
+    } while (std::abs(p_star - p_star_last) / p_star_last > stop_criteria && iter_num < 10000);
 
+    if (iter_num >= 10000) {
+        std::cout << "Did not converge!" << std::endl;
+        assert(false);
+    }
     // std::cout << "Pressure Iteration Ended" << std::endl;
 }
 

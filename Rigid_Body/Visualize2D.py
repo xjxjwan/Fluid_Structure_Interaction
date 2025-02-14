@@ -10,8 +10,7 @@ import os
 
 
 ## Global Parameters ##
-case_id = 5
-
+case_id = 7
 
 if case_id in [1, 2, 3, 4]:
     x0, x1 = 0.0, 1.0
@@ -25,14 +24,20 @@ if case_id in [5, 6]:
     fig_len_x = 15
     nCellsX, nCellsY = 100, 100
 
+if case_id in [7]:
+    x0, x1 = 0.0, 1.0
+    y0, y1 = 0.0, 1.0
+    fig_len_x = 7.5
+    nCellsX, nCellsY = 100, 100
+
 dx = (x1 - x0) / nCellsX
 dy = (y1 - y0) / nCellsY
 
 
 ## visualization preparation
 fig, ax = plt.subplots(1, 1, figsize=(fig_len_x, 6))
-# manager = plt.get_current_fig_manager()
-# manager.window.wm_geometry("+600+60")
+manager = plt.get_current_fig_manager()
+manager.window.wm_geometry("+600+60")
 label_list = ['Density', 'VelocityX', 'VelocityY', 'Pressure']
 
 
@@ -45,7 +50,7 @@ ites = sorted(ites)
 
 
 ## visualization function
-def visualize_single(cur_ax, var_id, ite):
+def visualize_single(cur_ax, var_id, ite, animating = False):
     
     file_name = "ite=%d.txt" % ite
     file_path = os.path.join(folder_path, file_name)
@@ -82,41 +87,45 @@ def visualize_single(cur_ax, var_id, ite):
     data_list = [rho, vx, vy, p]
 
     # Define the actual coordinate values for ticks
-    x_ticks = np.linspace(x0, x1, 21).round(1)
-    y_ticks = np.linspace(y0, y1, 11).round(1)
+    num_x = int(nCellsX / 10) + 1
+    num_y = int(nCellsY / 10) + 1
+    x_ticks = np.linspace(x0, x1, num_x).round(1)
+    y_ticks = np.linspace(y0, y1, num_y).round(1)
     y_ticks = np.flipud(y_ticks)
     
     # visualization
     cur_ax.cla()
     data = data_list[var_id]
-    sns.heatmap(data, ax=cur_ax, cbar=True)
+    sns.heatmap(data, ax=cur_ax, cbar=not(animating))
+        
+    if animating:
+        fig.subplots_adjust(left=0.1, right=0.8, bottom=0.1, top=0.95)
+        plt.pause(0.01)
+    else:
+        cur_ax.set_title(label_list[var_id] + ", Time = %.3fs" % time)
+        cur_ax.set_xlabel('X')
+        cur_ax.set_ylabel('Y')
 
-    cur_ax.set_title(label_list[var_id] + ", Time = %.3fs" % time)
-    cur_ax.set_xlabel('X')
-    cur_ax.set_ylabel('Y')
+        # change coordinates
+        xtick_positions = np.linspace(0, nCellsX, num_x)
+        ytick_positions = np.linspace(0, nCellsY, num_y)
 
-    # change coordinates
-    xtick_positions = np.linspace(0, nCellsX, 21)
-    ytick_positions = np.linspace(0, nCellsY, 11)
+        cur_ax.set_xticks(xtick_positions)
+        cur_ax.set_xticklabels(x_ticks)
 
-    cur_ax.set_xticks(xtick_positions)
-    cur_ax.set_xticklabels(x_ticks)
+        cur_ax.set_yticks(ytick_positions)
+        cur_ax.set_yticklabels(y_ticks)
 
-    cur_ax.set_yticks(ytick_positions)
-    cur_ax.set_yticklabels(y_ticks)
-    
-    # cur_ax.grid(alpha = 0.1)
-    # plt.pause(0.01)
-    plt.savefig("res/case_%d_%s.png" % (case_id, label_list[var_id]))
-    plt.show()
+        plt.savefig("res/Case_%d_%s_T=%.2fs.png" % (case_id, label_list[var_id], time))
+        plt.show()
 
 
 if __name__ == "__main__":
 
-    # var_id: 0-Density, 1-VelocityX, 2-VelocityY, 3-Pressure
-    visualize_single(ax, 0, ites[-1])
+    # # var_id: 0-Density, 1-VelocityX, 2-VelocityY, 3-Pressure
+    # visualize_single(ax, 0, ites[-1])
     
-    # # animation
-    # for ite in ites:
-    #     visualize_single(ax, 0, ite)
+    # animation
+    for ite in ites:
+        visualize_single(ax, 0, ite, animating = True)
 

@@ -27,7 +27,7 @@ void InitializeU(std::vector<std::vector<std::array<double, 4>>>& u, const doubl
             }
         }
         // set transmissive boundary condition
-        setBoundaryCondition(u, nCellsX, nCellsY);
+        setBoundaryCondition(u, nCellsX, nCellsY, case_id);
     }
 
     // Case 5: Static circle interact with moving fluid
@@ -44,7 +44,7 @@ void InitializeU(std::vector<std::vector<std::array<double, 4>>>& u, const doubl
             }
         }
         // set transmissive boundary condition
-        setBoundaryCondition(u, nCellsX, nCellsY);
+        setBoundaryCondition(u, nCellsX, nCellsY, case_id);
     }
 
     // Case 6: Moving circle interact with initially static fluid
@@ -61,7 +61,24 @@ void InitializeU(std::vector<std::vector<std::array<double, 4>>>& u, const doubl
             }
         }
         // set transmissive boundary condition
-        setBoundaryCondition(u, nCellsX, nCellsY);
+        setBoundaryCondition(u, nCellsX, nCellsY, case_id);
+    }
+
+    // Case 7: Moving circle with varying velocity interact with initially static fluid
+    if (case_id == 7) {
+        for (int i = 2; i < nCellsX + 2; i++) {
+            for (int j = 2; j < nCellsY + 2; j++) {
+
+                // get coordinates and initial values
+                std::array<double, 4> u_ij;
+                u_ij = {1.0, 0.0, 0.0, 1.0};
+
+                // transform from primitive to conservative
+                u[i][j] = prim2cons(u_ij, gama, p_inf);
+            }
+        }
+        // set transmissive boundary condition
+        setBoundaryCondition(u, nCellsX, nCellsY, case_id);
     }
 
 }

@@ -37,7 +37,7 @@ double levelSetUpdate(const std::vector<std::vector<double>>& phi, const int& i,
 }
 
 
-std::vector<std::vector<double>> calLevelSet(const std::array<double, 2>& v_rigid, const double t, const int nCellsX, const int nCellsY,
+std::vector<std::vector<double>> calLevelSet(const std::array<double, 2>& rigid_center, const int nCellsX, const int nCellsY,
     const double x0, const double y0, const double dx, const double dy, const int case_id) {
 
     std::vector phi(nCellsX + 4, std::vector<double>(nCellsY + 4));
@@ -48,7 +48,7 @@ std::vector<std::vector<double>> calLevelSet(const std::array<double, 2>& v_rigi
             for (int j = 2; j < nCellsY + 2; j++) {
                 const double x = x0 + (i - 1.5) * dx;
                 const double y = y0 + (j - 1.5) * dy;
-                phi[i][j] = std::sqrt(pow(x - 0.6, 2) + pow(y - 0.5, 2)) - 0.2;
+                phi[i][j] = std::sqrt(pow(x - rigid_center[0], 2) + pow(y - rigid_center[1], 2)) - 0.2;
             }
         }
         // set transmissive boundary condition
@@ -57,10 +57,9 @@ std::vector<std::vector<double>> calLevelSet(const std::array<double, 2>& v_rigi
 
     // Case 2: Shock wave interact with square
     if (case_id == 2) {
-        std::array center = {0.6, 0.5};
         const double edge_length = 0.4;
-        const double up = center[1] + edge_length/2, down = center[1] - edge_length/2;
-        const double left = center[0] - edge_length/2, right = center[0] + edge_length/2;
+        const double up = rigid_center[1] + edge_length / 2, down = rigid_center[1] - edge_length / 2;
+        const double left = rigid_center[0] - edge_length / 2, right = rigid_center[0] + edge_length / 2;
 
         for (int i = 2; i < nCellsX + 2; i++) {
             for (int j = 2; j < nCellsY + 2; j++) {
@@ -124,26 +123,39 @@ std::vector<std::vector<double>> calLevelSet(const std::array<double, 2>& v_rigi
         setLevelSetBoundaryCondition(phi, nCellsX, nCellsY);
     }
 
-    // Case 5: Shock wave interact with static circle
+    // Case 5: Moving fluid interact with static circle
     if (case_id == 5) {
         for (int i = 2; i < nCellsX + 2; i++) {
             for (int j = 2; j < nCellsY + 2; j++) {
                 const double x = x0 + (i - 1.5) * dx;
                 const double y = y0 + (j - 1.5) * dy;
-                phi[i][j] =  std::sqrt(pow(x - 0.5, 2) + pow(y - 0.5, 2)) - 0.2;
+                phi[i][j] =  std::sqrt(pow(x - rigid_center[0], 2) + pow(y - rigid_center[1], 2)) - 0.2;
             }
         }
         // set transmissive boundary condition
         setLevelSetBoundaryCondition(phi, nCellsX, nCellsY);
     }
 
-    // Case 6: Shock wave interact with moving circle
+    // Case 6: Static fluid interact with moving circle
     if (case_id == 6) {
         for (int i = 2; i < nCellsX + 2; i++) {
             for (int j = 2; j < nCellsY + 2; j++) {
                 const double x = x0 + (i - 1.5) * dx;
                 const double y = y0 + (j - 1.5) * dy;
-                phi[i][j] =  std::sqrt(pow(x - (1.5 + v_rigid[0] * t), 2) + pow(y - (0.5 + v_rigid[1]), 2)) - 0.2;
+                phi[i][j] =  std::sqrt(pow(x - rigid_center[0], 2) + pow(y - rigid_center[1], 2)) - 0.2;
+            }
+        }
+        // set transmissive boundary condition
+        setLevelSetBoundaryCondition(phi, nCellsX, nCellsY);
+    }
+
+    // Case 7: Static fluid interact with moving circle with varying velocity
+    if (case_id == 7) {
+        for (int i = 2; i < nCellsX + 2; i++) {
+            for (int j = 2; j < nCellsY + 2; j++) {
+                const double x = x0 + (i - 1.5) * dx;
+                const double y = y0 + (j - 1.5) * dy;
+                phi[i][j] =  std::sqrt(pow(x - rigid_center[0], 2) + pow(y - rigid_center[1], 2)) - 0.1;
             }
         }
         // set transmissive boundary condition
