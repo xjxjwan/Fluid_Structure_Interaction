@@ -19,16 +19,17 @@ double computeTimeStep(const std::vector<std::vector<std::array<double, 4>>>& u1
             double cur_Cs = std::sqrt(gama * (cur_p + p_inf) / cur_rho);  // p and rho cannot be negative
             double cur_a = vel + cur_Cs;
             a_list.push_back(cur_a);  // the largest eigenvalue (wave speed)
+
+            if (std::isnan(cur_a)) {
+                std::cout << i << " " << j << " " << cur_rho << " " << cur_p << std::endl;
+                assert(false);
+            }
         }
     }
 
     // For stability: numerical dependence stencil should contain the largest wave speed
     const auto max_iter = std::max_element(a_list.begin(), a_list.end());
     const double timeStep = C * std::min(dx, dy) / *max_iter;
-
-    if (std::isnan(timeStep)) {
-        assert(false);
-    }
 
     return timeStep;
 }

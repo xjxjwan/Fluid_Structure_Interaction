@@ -9,8 +9,8 @@
 #include <ostream>
 
 
-void func_resize(std::vector<std::vector<std::array<double, 4>>>& data_structure, const int size) {
-    data_structure.resize(size, std::vector<std::array<double, 4>>(size));
+void func_resize(std::vector<std::vector<std::array<double, 4>>>& data_structure, const int size_X, const int size_Y) {
+    data_structure.resize(size_X, std::vector<std::array<double, 4>>(size_Y));
 }
 
 

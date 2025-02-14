@@ -10,12 +10,12 @@
 
 
 void fastSweeping(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
-    const int nCells, const double dx, const double dy) {
+    const int nCellsX, const int nCellsY, const double dx, const double dy) {
 
     // Remove all values not adjacent to interface
     double huge = 10000.0;
-    for (int i = 0; i < nCells + 4; i++) {
-        for (int j = 0; j < nCells + 4; j++) {
+    for (int i = 0; i < nCellsX + 4; i++) {
+        for (int j = 0; j < nCellsY + 4; j++) {
             if (interface_location[i][j] == 0) {  // not adjacent to interface
                 if (phi[i][j] > 0) {phi[i][j] = huge;}
                 else {phi[i][j] = -huge;}
@@ -24,15 +24,15 @@ void fastSweeping(std::vector<std::vector<double>>& phi, const std::vector<std::
     }
 
     // Fast sweeping
-    sweep1(phi, interface_location, nCells, dx, dy);
-    sweep2(phi, interface_location, nCells, dx, dy);
-    sweep3(phi, interface_location, nCells, dx, dy);
-    sweep4(phi, interface_location, nCells, dx, dy);
+    sweep1(phi, interface_location, nCellsX, nCellsY, dx, dy);
+    sweep2(phi, interface_location, nCellsX, nCellsY, dx, dy);
+    sweep3(phi, interface_location, nCellsX, nCellsY, dx, dy);
+    sweep4(phi, interface_location, nCellsX, nCellsY, dx, dy);
 
 
     // Check all values updated
-    for (int i = 2; i < nCells + 2; i++) {
-        for (int j = 2; j < nCells + 2; j++) {
+    for (int i = 2; i < nCellsX + 2; i++) {
+        for (int j = 2; j < nCellsY + 2; j++) {
             if (interface_location[i][j] == 0) {  // not adjacent to interface
                 if (std::abs(phi[i][j]) > 1.5) {
                     std::cout << "This is grid is not updated: " << i << " " << j << std::endl;
@@ -102,11 +102,11 @@ int update(std::vector<std::vector<double>>& phi, int i, int j, double dx, doubl
 
 // Sweep x+, y+
 void sweep1(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
-    const int nCells, const double dx, const double dy) {
+    const int nCellsX, const int nCellsY, const double dx, const double dy) {
 
     bool found_interface = false;
-    for (int j = 2; j < nCells + 2; j++) {
-        for (int i = 2; i < nCells + 2; i++) {
+    for (int j = 2; j < nCellsY + 2; j++) {
+        for (int i = 2; i < nCellsX + 2; i++) {
             // repeat until adjacent to the interface
             if (interface_location[i][j] == 0 && !found_interface) {
                 continue;
@@ -123,11 +123,11 @@ void sweep1(std::vector<std::vector<double>>& phi, const std::vector<std::vector
 
 // Sweep x-, y+
 void sweep2(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
-    const int nCells, const double dx, const double dy) {
+    const int nCellsX, const int nCellsY, const double dx, const double dy) {
 
     bool found_interface = false;
-    for (int i = nCells + 1; i > 1; i--) {
-        for (int j = 2; j < nCells + 2; j++) {
+    for (int i = nCellsX + 1; i > 1; i--) {
+        for (int j = 2; j < nCellsY + 2; j++) {
             // repeat until adjacent to the interface
             if (interface_location[i][j] == 0 && !found_interface) {
                 continue;
@@ -144,11 +144,11 @@ void sweep2(std::vector<std::vector<double>>& phi, const std::vector<std::vector
 
 // Sweep x-, y-
 void sweep3(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
-    const int nCells, const double dx, const double dy) {
+    const int nCellsX, const int nCellsY, const double dx, const double dy) {
 
     bool found_interface = false;
-    for (int j = nCells + 1; j > 1; j--) {
-        for (int i = nCells + 1; i > 1; i--) {
+    for (int j = nCellsY + 1; j > 1; j--) {
+        for (int i = nCellsX + 1; i > 1; i--) {
             // repeat until adjacent to the interface
             if (interface_location[i][j] == 0 && !found_interface) {
                 continue;
@@ -165,11 +165,11 @@ void sweep3(std::vector<std::vector<double>>& phi, const std::vector<std::vector
 
 // Sweep x+, y-
 void sweep4(std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
-    const int nCells, const double dx, const double dy) {
+    const int nCellsX, const int nCellsY, const double dx, const double dy) {
 
     bool found_interface = false;
-    for (int i = 2; i < nCells + 2; i++) {
-        for (int j = nCells + 1; j > 1; j--) {
+    for (int i = 2; i < nCellsX + 2; i++) {
+        for (int j = nCellsY + 1; j > 1; j--) {
             // repeat until adjacent to the interface
             if (interface_location[i][j] == 0 && !found_interface) {
                 continue;

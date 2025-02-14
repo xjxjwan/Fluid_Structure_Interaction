@@ -14,6 +14,6 @@ std::array<double, 2> singleVarReconstruct(const double& q_i0, const double& q_i
 
 // 声明 dataReconstruct 函数
 std::vector<std::array<double, 4>> dataReconstruct(const std::array<double, 4>& u_i0,
-    const std::array<double, 4>& u_i, const std::array<double, 4>& u_i1);
+    const std::array<double, 4>& u_i, const std::array<double, 4>& u_i1, double gama, double p_inf);
 
 #endif // RECONSTRUCTION_H

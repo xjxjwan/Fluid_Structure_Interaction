@@ -21,17 +21,16 @@ double func_singleVarBilinearIntp(double q_11, double q_12, double q_21, double 
 
 std::array<double, 4> func_bilinearIntp(const std::vector<std::vector<std::array<double, 4>>>& u,
     const std::vector<std::vector<double>>& phi, const double i, const double j,
-    const double dx, const double dy, const double x0, const double y0, const bool phi_positive) {
+    const double dx, const double dy, const double x0, const double y0) {
 
     // calculate the indexes of four surrounding grids
     const int i_1 = std::floor(i), i_2 = std::ceil(i), j_1 = std::floor(j), j_2 = std::ceil(j);
     bool at_center = i_1 == i_2 || j_1 == j_2;  // interpolated point exactly along the mid-line of grid
 
     // check whether the four surrounding grids are in the same material
-    const double phi_11 = phi[i_1][j_1], phi_12 = phi[i_1][j_2], phi_21 = phi[i_2][j_1], phi_22 = phi[i_2][j_2];
-    bool same_material;
-    if (phi_positive) {same_material = phi_11 > 0 && phi_12 > 0 && phi_21 > 0 && phi_22 > 0;}
-    else {same_material = phi_11 < 0 && phi_12 < 0 && phi_21 < 0 && phi_22 < 0;}
+    // const double phi_11 = phi[i_1][j_1], phi_12 = phi[i_1][j_2], phi_21 = phi[i_2][j_1], phi_22 = phi[i_2][j_2];
+    // bool same_material = phi_11 > 0 && phi_12 > 0 && phi_21 > 0 && phi_22 > 0;
+    bool same_material = true;
 
     // for the above two special cases, use real GFM instead
     if (not same_material or at_center) {
@@ -80,8 +79,7 @@ std::array<double, 4> func_calInitialState(const std::vector<std::vector<std::ar
 
     // get two initial states for the Riemann problem by bilinear interpolation
     const double pos_i = (pos_x - x0) / dx + 1.5, pos_j = (pos_y - y0) / dy + 1.5;
-    bool phi_positive = false;
-    const std::array<double, 4> u_intp = func_bilinearIntp(u, phi, pos_i, pos_j, dx, dy, x0, y0, phi_positive);
+    const std::array<double, 4> u_intp = func_bilinearIntp(u, phi, pos_i, pos_j, dx, dy, x0, y0);
 
     return u_intp;
 }
@@ -89,7 +87,8 @@ std::array<double, 4> func_calInitialState(const std::vector<std::vector<std::ar
 
 std::array<double, 4> func_solveRiemannProblem(const std::vector<std::vector<std::array<double, 4>>>& u,
     const std::vector<std::vector<double>>& phi, const int i, const int j, const double dx, const double dy,
-    const double x0, const double y0, const double gama, const double p_inf, const double epsilon, const int case_id) {
+    const double x0, const double y0, const double gama, const double p_inf, const double epsilon,
+    const std::array<double, 2>& v_rigid) {
 
     // interpolate initial states
     const double cur_phi = phi[i][j];
@@ -101,22 +100,22 @@ std::array<double, 4> func_solveRiemannProblem(const std::vector<std::vector<std
     std::array u_intp_prim = cons2prim(u_intp, gama, p_inf);
 
     // determine right state (real material, phi > 0)
-    double rho_r = u_intp_prim[0], p_r = u_intp_prim[3];
-    double vn_r = u_intp_prim[1] * normal_vector[0] + u_intp_prim[2] * normal_vector[1];
-    std::vector vt_r = {u_intp_prim[1] - vn_r * normal_vector[0], u_intp_prim[2] - vn_r * normal_vector[1]};
+    const double rho_r = u_intp_prim[0], vx_r = u_intp_prim[1], vy_r = u_intp_prim[2], p_r = u_intp_prim[3];
+    const double vx_r_relative = vx_r - v_rigid[0];  // relative velocity to rigid body
+    const double vy_r_relative = vy_r - v_rigid[1];
+    const double vn_r = vx_r_relative * normal_vector[0] + vy_r_relative * normal_vector[1];
+    const std::vector vt_r = {vx_r_relative - vn_r * normal_vector[0], vy_r_relative - vn_r * normal_vector[1]};
 
     // determine left state (rigid body, phi < 0)
     double rho_l = 0.0, vn_l = 0.0, p_l = 0.0;
-    if (case_id == 1 || case_id == 2 || case_id == 3 || case_id == 4) {
-        rho_l = rho_r;
-        vn_l = -vn_r;
-        p_l = p_r;
-    }
-    if (rho_l == 0.0) {assert(false);}
+    rho_l = rho_r;
+    vn_l = -vn_r;
+    p_l = p_r;
 
     // get initial states for the Riemann problem
     std::array l_state = {rho_l, vn_l, p_l};  // only use normal velocity
     std::array r_state = {rho_r, vn_r, p_r};
+    // std::cout << "Got initial state" << " " << i << " " << j << std::endl;
 
     // solve the Riemann problem
     RiemannSolver RSolver(l_state, r_state);
@@ -126,8 +125,8 @@ std::array<double, 4> func_solveRiemannProblem(const std::vector<std::vector<std
     // update the ghost fluid cells adjacent to the interface
     const double ghost_rho_r = RSolver.rho_star_r;
     const double ghost_vn = RSolver.v_star, ghost_p = RSolver.p_star;
-    const double ghost_vx_r = ghost_vn * normal_vector[0] + vt_r[0];
-    const double ghost_vy_r = ghost_vn * normal_vector[1] + vt_r[1];
+    const double ghost_vx_r = ghost_vn * normal_vector[0] + vt_r[0] + v_rigid[0];  // IMPORTANT: add rigid body velocity back!
+    const double ghost_vy_r = ghost_vn * normal_vector[1] + vt_r[1] + v_rigid[1];
     const std::array temp_u_prim = {ghost_rho_r, ghost_vx_r, ghost_vy_r, ghost_p};
 
     return temp_u_prim;

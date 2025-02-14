@@ -9,13 +9,13 @@
 #include <ostream>
 
 void constantExtrapolation(std::vector<std::vector<std::array<double, 4>>>& u,
-    const std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location, const int nCells,
-    const double dx, const double dy) {
+    const std::vector<std::vector<double>>& phi, const std::vector<std::vector<int>>& interface_location,
+    const int nCellsX, const int nCellsY, const double dx, const double dy) {
 
     // Remove all values not adjacent to interface in the ghost region
     double huge = 10000.0;
-    for (int i = 0; i < nCells + 4; i++) {
-        for (int j = 0; j < nCells + 4; j++) {
+    for (int i = 0; i < nCellsX + 4; i++) {
+        for (int j = 0; j < nCellsY + 4; j++) {
             // not adjacent to the interface and in the ghost region
             if (interface_location[i][j] == 0 && phi[i][j] < 0) {
                 u[i][j] = {huge, huge, huge, huge};
@@ -24,14 +24,14 @@ void constantExtrapolation(std::vector<std::vector<std::array<double, 4>>>& u,
     }
 
     // fast sweeping
-    sweep1(u, phi, interface_location, nCells, dx, dy);
-    sweep2(u, phi, interface_location, nCells, dx, dy);
-    sweep3(u, phi, interface_location, nCells, dx, dy);
-    sweep4(u, phi, interface_location, nCells, dx, dy);
+    sweep1(u, phi, interface_location, nCellsX, nCellsY, dx, dy);
+    sweep2(u, phi, interface_location, nCellsX, nCellsY, dx, dy);
+    sweep3(u, phi, interface_location, nCellsX, nCellsY, dx, dy);
+    sweep4(u, phi, interface_location, nCellsX, nCellsY, dx, dy);
 
     // check
-    for (int i = 2; i < nCells + 2; i++) {
-        for (int j = 2; j < nCells + 2; j++) {
+    for (int i = 2; i < nCellsX + 2; i++) {
+        for (int j = 2; j < nCellsY + 2; j++) {
             // not adjacent to the interface and in the ghost region
             if (interface_location[i][j] == 0 && phi[i][j] < 0) {
                 if (std::abs(u[i][j][0]) >= huge || std::abs(u[i][j][1]) >= huge || std::abs(u[i][j][2]) >= huge || std::abs(u[i][j][3]) >= huge) {
@@ -87,12 +87,12 @@ void updateU(std::vector<std::vector<std::array<double, 4>>>& u, const std::vect
 
 // Sweep x+, y+
 void sweep1(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
-    const std::vector<std::vector<int>>& interface_location, const int nCells,
+    const std::vector<std::vector<int>>& interface_location, const int nCellsX, const int nCellsY,
     const double dx, const double dy) {
 
     // start sweeping
-    for (int j = 2; j < nCells + 2; j++) {
-        for (int i = 2; i < nCells + 2; i++) {
+    for (int j = 2; j < nCellsY + 2; j++) {
+        for (int i = 2; i < nCellsX + 2; i++) {
             // only update if not adjacent to the interface and in the ghost region
             if (interface_location[i][j] == 0 && phi[i][j] < 0) {
                 updateU(u, phi, i, j, dx, dy);
@@ -104,12 +104,12 @@ void sweep1(std::vector<std::vector<std::array<double, 4>>>& u, const std::vecto
 
 // Sweep x-, y+
 void sweep2(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
-    const std::vector<std::vector<int>>& interface_location, const int nCells,
+    const std::vector<std::vector<int>>& interface_location, const int nCellsX, const int nCellsY,
     const double dx, const double dy) {
 
     // start sweeping
-    for (int i = nCells + 1; i > 1; i--) {
-        for (int j = 2; j < nCells + 2; j++) {
+    for (int i = nCellsX + 1; i > 1; i--) {
+        for (int j = 2; j < nCellsY + 2; j++) {
             // only update if not adjacent to the interface and in the ghost region
             if (interface_location[i][j] == 0 && phi[i][j] < 0) {
                 updateU(u, phi, i, j, dx, dy);
@@ -121,12 +121,12 @@ void sweep2(std::vector<std::vector<std::array<double, 4>>>& u, const std::vecto
 
 // Sweep x-, y-
 void sweep3(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
-    const std::vector<std::vector<int>>& interface_location, const int nCells,
+    const std::vector<std::vector<int>>& interface_location, const int nCellsX, const int nCellsY,
     const double dx, const double dy) {
 
     // start sweeping
-    for (int j = nCells + 1; j > 1; j--) {
-        for (int i = nCells + 1; i > 1; i--) {
+    for (int j = nCellsY + 1; j > 1; j--) {
+        for (int i = nCellsX + 1; i > 1; i--) {
             // only update if not adjacent to the interface and in the ghost region
             if (interface_location[i][j] == 0 && phi[i][j] < 0) {
                 updateU(u, phi, i, j, dx, dy);
@@ -138,12 +138,12 @@ void sweep3(std::vector<std::vector<std::array<double, 4>>>& u, const std::vecto
 
 // Sweep x+, y-
 void sweep4(std::vector<std::vector<std::array<double, 4>>>& u, const std::vector<std::vector<double>>& phi,
-    const std::vector<std::vector<int>>& interface_location, const int nCells,
+    const std::vector<std::vector<int>>& interface_location, const int nCellsX, const int nCellsY,
     const double dx, const double dy) {
 
     // start sweeping
-    for (int i = 2; i < nCells + 2; i++) {
-        for (int j = nCells + 1; j > 1; j--) {
+    for (int i = 2; i < nCellsX + 2; i++) {
+        for (int j = nCellsY + 1; j > 1; j--) {
             // only update if not adjacent to the interface and in the ghost region
             if (interface_location[i][j] == 0 && phi[i][j] < 0) {
                 updateU(u, phi, i, j, dx, dy);

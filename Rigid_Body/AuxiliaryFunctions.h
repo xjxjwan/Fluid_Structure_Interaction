@@ -8,7 +8,7 @@
 #include <vector>
 #include <array>
 
-void func_resize(std::vector<std::vector<std::array<double, 4>>>& data_structure, int size);
+void func_resize(std::vector<std::vector<std::array<double, 4>>>& data_structure, int size_X, int size_Y);
 
 std::array<double, 4> prim2cons(const std::array<double, 4>& u_ij, double gama, double p_inf);
 

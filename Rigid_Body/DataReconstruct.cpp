@@ -1,6 +1,8 @@
 // Reconstruction.cpp
 #include "DataReconstruct.h"
+#include "AuxiliaryFunctions.h"
 #include <cmath>
+
 
 double getLimiter(const double& r) {
 
@@ -35,33 +37,38 @@ std::array<double, 2> singleVarReconstruct(const double& q_i0, const double& q_i
 
     double qBarBackward = q_i - 0.5 * slope_limiter * delta_i;
     double qBarForward = q_i + 0.5 * slope_limiter * delta_i;
-    std::array<double, 2> res = {qBarBackward, qBarForward};
+    std::array res = {qBarBackward, qBarForward};
     return res;
 }
 
 
-std::vector<std::array<double, 4>> dataReconstruct(std::array<double, 4> const& u_i0, std::array<double, 4> const& u_i, std::array<double, 4> const& u_i1) {
+std::vector<std::array<double, 4>> dataReconstruct(std::array<double, 4> const& u_i0, std::array<double, 4> const& u_i,
+    std::array<double, 4> const& u_i1, const double gama, const double p_inf) {
 
-    // variable substitution
-    const double& rho_i0 = u_i0[0], momx_i0 = u_i0[1], momy_i0 = u_i0[2], E_i0 = u_i0[3];
-    const double& rho_i = u_i[0], momx_i = u_i[1], momy_i = u_i[2], E_i = u_i[3];
-    const double& rho_i1 = u_i1[0], momx_i1 = u_i1[1], momy_i1 = u_i1[2], E_i1 = u_i1[3];
+    std::array<double, 4> uBarBackward_prim;
+    std::array<double, 4> uBarForward_prim;
 
-    std::array<double, 2> rhoBar = singleVarReconstruct(rho_i0, rho_i, rho_i1);
-    std::array<double, 2> momxBar = singleVarReconstruct(momx_i0, momx_i, momx_i1);
-    std::array<double, 2> momyBar = singleVarReconstruct(momy_i0, momy_i, momy_i1);
-    std::array<double, 2> EBar = singleVarReconstruct(E_i0, E_i, E_i1);
+    std::array<double, 4> u_i0_prim = cons2prim(u_i0, gama, p_inf);
+    std::array<double, 4> u_i_prim = cons2prim(u_i, gama, p_inf);
+    std::array<double, 4> u_i1_prim = cons2prim(u_i1, gama, p_inf);
 
-    // // debug
-    // if (rhoBar[0] == 0) {assert(false);}
-    // if (rhoBar[1] == 0) {assert(false);}
+    for (int k = 0; k < 4; k++) {
 
-    std::array<double, 4> uBarBackward = {rhoBar[0], momxBar[0], momyBar[0], EBar[0]};
-    std::array<double, 4> uBarForward = {rhoBar[1], momxBar[1], momyBar[1], EBar[1]};
+        const double q_i0 = u_i0_prim[k];
+        const double q_i = u_i_prim[k];
+        const double q_i1 = u_i1_prim[k];
+
+        std::array<double, 2> qBar = singleVarReconstruct(q_i0, q_i, q_i1);
+        uBarBackward_prim[k] = qBar[0];
+        uBarForward_prim[k] = qBar[1];
+    }
+
+    std::array<double, 4> uBarBackward_cons = prim2cons(uBarBackward_prim, gama, p_inf);
+    std::array<double, 4> uBarForward_cons = prim2cons(uBarForward_prim, gama, p_inf);
 
     std::vector<std::array<double, 4>> res{};
-    res.push_back(uBarBackward);
-    res.push_back(uBarForward);
+    res.push_back(uBarBackward_cons);
+    res.push_back(uBarForward_cons);
     return res;
 }
 

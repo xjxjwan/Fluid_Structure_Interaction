@@ -22,14 +22,13 @@ void RiemannSolver::CalCentralPressure(double gama_l, double gama_r, double p_in
     double p_l = left_state[2], p_r = right_state[2];
 
     // initialization
-    p_star = 2.0;
-    double p_star_last = 1.0;
+    p_star = 0.5 * (p_l + p_r);
+    double p_star_last = 0.0;
     int iter_num = 0;
     double f_l = 0.0, f_r = 0.0;
     double df_l = 0.0, df_r = 0.0;
 
-    while (std::abs(p_star - p_star_last) / p_star_last > stop_criteria) {
-
+    do {
         // left part
         if (p_star > p_l) {
             double A_l = 2 / ((gama_l + 1) * rho_l);
@@ -62,8 +61,8 @@ void RiemannSolver::CalCentralPressure(double gama_l, double gama_r, double p_in
         p_star_last = p_star;
         p_star = p_star - 0.1 * f / df;
         iter_num++;
-        // std::cout << iter_num << ": " << p_star << std::endl;
-    }
+        // std::cout << iter_num << ": " << p_l << " " << p_star_last << std::endl;
+    } while (std::abs(p_star - p_star_last) / p_star_last > stop_criteria);
 
     // std::cout << "Pressure Iteration Ended" << std::endl;
 }

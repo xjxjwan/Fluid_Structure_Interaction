@@ -9,6 +9,6 @@
 #include <array>
 
 void InitializeU(std::vector<std::vector<std::array<double, 4>>>& u, double gama, double p_inf,
-    int nCells, double x0, double y0, double dx, double dy, int case_id);
+    int nCellsX, int nCellsY, double x0, double y0, double dx, double dy, int case_id);
 
 #endif //INITIALIZATION_H
