@@ -37,10 +37,8 @@ double levelSetUpdate(const std::vector<std::vector<double>>& phi, const int& i,
 }
 
 
-std::vector<std::vector<double>> calLevelSet(const std::array<double, 2>& rigid_center, const int nCellsX, const int nCellsY,
-    const double x0, const double y0, const double dx, const double dy, const int case_id) {
-
-    std::vector phi(nCellsX + 4, std::vector<double>(nCellsY + 4));
+void calLevelSet(std::vector<std::vector<double>>& phi, const std::array<double, 2>& rigid_center, const int nCellsX,
+    const int nCellsY, const double x0, const double y0, const double dx, const double dy, const int case_id) {
 
     // Case 1: Shock wave interact with circle
     if (case_id == 1) {
@@ -161,8 +159,6 @@ std::vector<std::vector<double>> calLevelSet(const std::array<double, 2>& rigid_
         // set transmissive boundary condition
         setLevelSetBoundaryCondition(phi, nCellsX, nCellsY);
     }
-
-    return phi;
 }
 
 
