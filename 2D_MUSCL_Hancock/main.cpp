@@ -29,7 +29,7 @@ int main() {
     double epsilon = 1e-8;  // stop criterion for the pressure iteration in the exact Riemann solver
 
     // parameters that change across experiments
-    int case_id = 3;
+    int case_id = 2;
     int nCellsX = 0, nCellsY = 0;
     std::vector<std::vector<std::array<double, 4>>> u{};  // 4 ghost cells
     double x0 = 0.0, y0 = 0.0, x1 = 0.0, y1 = 0.0;  // simulation range
@@ -37,7 +37,7 @@ int main() {
 
     // Case 1: Sod test in x-direction
     if (case_id == 1) {
-        nCellsX = 100, nCellsY = 100;
+        nCellsX = 200, nCellsY = 200;
         func_resize(u, nCellsX + 4, nCellsY + 4);
         x0 = 0.0, y0 = 0.0;
         x1 = 1.0, y1 = 1.0;
@@ -45,7 +45,7 @@ int main() {
     }
     // Case 2: Sod test in y-direction
     if (case_id == 2) {
-        nCellsX = 100, nCellsY = 100;
+        nCellsX = 200, nCellsY = 200;
         func_resize(u, nCellsX + 4, nCellsY + 4);
         x0 = 0.0, y0 = 0.0;
         x1 = 1.0, y1 = 1.0;
@@ -53,7 +53,7 @@ int main() {
     }
     // Case 3: Cylindrical explosion test
     if (case_id == 3) {
-        nCellsX = 100, nCellsY = 100;
+        nCellsX = 500, nCellsY = 500;
         func_resize(u, nCellsX + 4, nCellsY + 4);
         x0 = 0.0, y0 = 0.0;
         x1 = 2.0, y1 = 2.0;

@@ -3,6 +3,7 @@
 #include "RiemannSolver.h"
 #include "AuxiliaryFunctions.h"
 #include <cmath>
+#include <cassert>
 
 
 std::array<double, 4> getFluxX(std::array<double, 4> const& u_i, std::array<double, 4> const& u_i1,
@@ -23,22 +24,17 @@ std::array<double, 4> getFluxX(std::array<double, 4> const& u_i, std::array<doub
     double center_pos = 0.0;
 
     // solve Riemann problem
-    std::array<double, 3> u_half;
+    RiemannSolver RSolver(l_state, r_state, final_time, center_pos);
+    RSolver.CalCentralPressure(gama, gama, p_inf, p_inf, epsilon);
+    RSolver.CalCentralValues(gama, gama, p_inf, p_inf);
+    RSolver.GetWaveTypeMode(gama, p_inf);
+    std::array<double, 3> u_half = RSolver.SolveSinglePoint(gama, center_pos);
+
     double vy_half = 0.0;
-    if (rho_i == rho_i1 && vx_i == vx_i1 && vy_i == vy_i1 && p_i == p_i1) {
-        u_half = l_state;
+    if (RSolver.v_star > 0) {
         vy_half = vy_i;
     } else {
-        RiemannSolver RSolver(l_state, r_state, final_time, center_pos);
-        RSolver.CalCentralPressure(gama, gama, p_inf, p_inf, epsilon);
-        RSolver.CalCentralValues(gama, gama, p_inf, p_inf);
-        RSolver.GetWaveTypeMode(gama, p_inf);
-        u_half = RSolver.SolveSinglePoint(gama, center_pos);
-        if (RSolver.v_star > 0) {
-            vy_half = vy_i;
-        } else {
-            vy_half = vy_i1;
-        }
+        vy_half = vy_i1;
     }
 
     // calculate flux
@@ -72,22 +68,17 @@ std::array<double, 4> getFluxY(std::array<double, 4> const& u_i, std::array<doub
     double center_pos = 0.0;
 
     // solve Riemann problem
-    std::array<double, 3> u_half;
+    RiemannSolver RSolver(l_state, r_state, final_time, center_pos);
+    RSolver.CalCentralPressure(gama, gama, p_inf, p_inf, epsilon);
+    RSolver.CalCentralValues(gama, gama, p_inf, p_inf);
+    RSolver.GetWaveTypeMode(gama, p_inf);
+    std::array<double, 3> u_half = RSolver.SolveSinglePoint(gama, center_pos);
+
     double vx_half = 0.0;
-    if (rho_i == rho_i1 && vx_i == vx_i1 && vy_i == vy_i1 && p_i == p_i1) {
-        u_half = l_state;
-        vx_half = vy_i;
+    if (RSolver.v_star > 0) {
+        vx_half = vx_i;
     } else {
-        RiemannSolver RSolver(l_state, r_state, final_time, center_pos);
-        RSolver.CalCentralPressure(gama, gama, p_inf, p_inf, epsilon);
-        RSolver.CalCentralValues(gama, gama, p_inf, p_inf);
-        RSolver.GetWaveTypeMode(gama, p_inf);
-        u_half = RSolver.SolveSinglePoint(gama, center_pos);
-        if (RSolver.v_star > 0) {
-            vx_half = vx_i;
-        } else {
-            vx_half = vx_i1;
-        }
+        vx_half = vx_i1;
     }
 
     // calculate flux

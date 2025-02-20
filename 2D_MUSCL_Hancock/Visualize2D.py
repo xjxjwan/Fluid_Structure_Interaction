@@ -10,15 +10,21 @@ import os
 
 
 ## Global Parameters ##
-case_id = 1
-var_id = 1  # var_id: 0-Density, 1-VelocityX, 2-VelocityY, 3-Pressure
+case_id = 2
+var_id = 0  # var_id: 0-Density, 1-Velocity Magnitude, 2-Pressure
 t = 0.25
 
-if case_id in [1, 2, 3, 4]:
+if case_id in [1, 2]:
     x0, x1 = 0.0, 1.0
     y0, y1 = 0.0, 1.0
     fig_len_x = 7.5
-    nCellsX, nCellsY = 100, 100
+    nCellsX, nCellsY = 200, 200
+
+if case_id in [3]:
+    x0, x1 = 0.0, 2.0
+    y0, y1 = 0.0, 2.0
+    fig_len_x = 7.5
+    nCellsX, nCellsY = 500, 500
 
 dx = (x1 - x0) / nCellsX
 dy = (y1 - y0) / nCellsY
@@ -28,7 +34,7 @@ dy = (y1 - y0) / nCellsY
 fig, ax = plt.subplots(1, 1, figsize=(fig_len_x, 6))
 manager = plt.get_current_fig_manager()
 manager.window.wm_geometry("+300+60")
-label_list = ['Density', 'VelocityX', 'VelocityY', 'Pressure']
+label_list = ['Density', 'Velocity', 'Pressure']
 
 
 ## extract files
@@ -51,8 +57,7 @@ def visualize_single(cur_ax, var_id, t, animating = False):
 
     ## data storage
     rho = np.zeros((nCellsY, nCellsX))
-    vx = np.zeros((nCellsY, nCellsX))
-    vy = np.zeros((nCellsY, nCellsX))
+    v = np.zeros((nCellsY, nCellsX))
     p = np.zeros((nCellsY, nCellsX))
     
     try:
@@ -75,12 +80,10 @@ def visualize_single(cur_ax, var_id, t, animating = False):
         row = int(round((nCellsY - 1) - ((y - y0) / dy - 0.5)))
 
         rho[row, col] = cur_rho
-        vx[row, col] = cur_vx
-        vy[row, col] = cur_vy
+        v[row, col] = pow(pow(cur_vx, 2) + pow(cur_vy, 2), 0.5)
         p[row, col] = cur_p
 
-    # get real material data (real material: phi > 0)
-    data_list = [rho, vx, vy, p]
+    data_list = [rho, v, p]
 
     # Define the actual coordinate values for ticks
     x_ticks = np.linspace(x0, x1, 11).round(1)

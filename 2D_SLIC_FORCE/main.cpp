@@ -11,6 +11,11 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <iomanip>
+#include <string>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 
 std::array<double, 4> prim2cons(std::array<double, 4> const& u_ij, const double gama) {
@@ -345,9 +350,9 @@ void setBoundaryCondition(std::vector<std::vector<std::array<double, 4>>>& u, co
 int main() {
 
     // parameters
-    int nCells = 100;
+    int nCells = 200;
     double x0 = 0.0, y0 = 0.0;
-    double x1 = 1.0, y1 = 1.0;
+    double x1 = 2.0, y1 = 2.0;
     double tStart = 0.0;
 
     double C = 0.8;
@@ -359,7 +364,7 @@ int main() {
     u.resize(nCells + 4, std::vector<std::array<double, 4>>(nCells + 4));
 
     // initial data
-    int case_id = 2;
+    int case_id = 3;
     double tStop = 0.25;
     for (int i = 2; i < nCells + 2; i++) {
         for (int j = 2; j < nCells + 2; j++) {
@@ -377,6 +382,12 @@ int main() {
             // Case 2: The Sod Test in Y-direction
             if (case_id == 2) {
                 if (y <= 0.5) {u_ij = {1.0, 0.0, 0.0, 1.0};}
+                else {u_ij = {0.125, 0.0, 0.0, 0.1};}
+            }
+            // Case 3: Explosion Test
+            if (case_id == 3) {
+                const double distance = pow(pow(x - 1.0, 2) + pow(y - 1.0, 2), 0.5);
+                if (distance <= 0.4) {u_ij = {1.0, 0.0, 0.0, 1.0};}
                 else {u_ij = {0.125, 0.0, 0.0, 0.1};}
             }
 
@@ -532,32 +543,40 @@ int main() {
         u = uPlus1;  // final result for this update-loop
         counter++;
 
-        // transform
-        std::vector<std::vector<std::array<double, 4>>> u_prim;
-        u_prim.resize(nCells + 4, std::vector<std::array<double, 4>>(nCells + 4));
-        for (int i = 0; i < nCells + 4; i++) {
-            for (int j = 0; j < nCells + 4; j++) {
-                u_prim[i][j] = cons2prim(u[i][j], gama);
-            }
-        }
-
-
-        // data recording
-        std::ostringstream oss;
-        oss << "D:/Study_Master/WrittenAssignment/WorkSpace/2D_SLIC/res/case_" << case_id << "/ite=" << counter << ".txt";
-        std::string fileName = oss.str();
-        std::fstream outFile(fileName, std::ios::out);
-        for (int i = 2; i < nCells + 2; i++) {
-            for (int j = 2; j < nCells + 2; j++) {
-                // std::cout << x0 + (i - 1) * dx << ", " << u[i][0] << ", " << u[i][1] << ", " << u[i][2] << std::endl;
-                outFile << x0 + (i - 1.5) * dx << ", " << y0 + (j - 1.5) * dy
-                << ", " << u_prim[i][j][0] << ", " << u_prim[i][j][1] << ", " << u_prim[i][j][2] << ", " << u_prim[i][j][3]
-                << ", " << t << std::endl;
-            }
-        }
-        outFile.close();
-
     } while (t < tStop);
+
+    // data recording
+    // transform
+    std::vector<std::vector<std::array<double, 4>>> u_prim;
+    u_prim.resize(nCells + 4, std::vector<std::array<double, 4>>(nCells + 4));
+    for (int i = 0; i < nCells + 4; i++) {
+        for (int j = 0; j < nCells + 4; j++) {
+            u_prim[i][j] = cons2prim(u[i][j], gama);
+        }
+    }
+
+    // check whether the directory exists, create one if not
+    std::ostringstream folderPath;
+    folderPath << "D:/Study_Master/WrittenAssignment/WorkSpace/2D_SLIC_FORCE/res/Case_" << case_id;
+    std::string caseFolder = folderPath.str();
+    if (!fs::exists(caseFolder)) {
+        fs::create_directories(caseFolder);
+    }
+
+    // data recording
+    std::ostringstream oss;
+    oss << caseFolder << "/T=" << std::setprecision(2) << t << ".txt";
+    std::string fileName = oss.str();
+    std::fstream outFile(fileName, std::ios::out);
+    for (int i = 2; i < nCells + 2; i++) {
+        for (int j = 2; j < nCells + 2; j++) {
+            // std::cout << x0 + (i - 1) * dx << ", " << u[i][0] << ", " << u[i][1] << ", " << u[i][2] << std::endl;
+            outFile << x0 + (i - 1.5) * dx << ", " << y0 + (j - 1.5) * dy
+            << ", " << u_prim[i][j][0] << ", " << u_prim[i][j][1] << ", " << u_prim[i][j][2] << ", " << u_prim[i][j][3]
+            << std::endl;
+        }
+    }
+    outFile.close();
 
     return 0;
 }

@@ -1,4 +1,4 @@
-# Install script for directory: D:/Study_Master/WrittenAssignment/WorkSpace/2D_SLIC
+# Install script for directory: D:/Study_Master/WrittenAssignment/WorkSpace/2D_SLIC_FORCE
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "D:/Study_Master/WrittenAssignment/WorkSpace/2D_SLIC/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "D:/Study_Master/WrittenAssignment/WorkSpace/2D_SLIC_FORCE/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
