@@ -10,9 +10,10 @@ import os
 
 
 ## Global Parameters ##
-case_id = 2
-var_id = 0  # var_id: 0-Density, 1-Velocity Magnitude, 2-Pressure
+case_id = 3
+var_id = 3  # var_id: 0-Density, 1-Velocity, 2-Pressure, 3-Energy
 t = 0.25
+gama = 1.4
 
 if case_id in [1, 2]:
     x0, x1 = 0.0, 1.0
@@ -24,7 +25,7 @@ if case_id in [3]:
     x0, x1 = 0.0, 2.0
     y0, y1 = 0.0, 2.0
     fig_len_x = 7.5
-    nCellsX, nCellsY = 500, 500
+    nCellsX, nCellsY = 400, 400
 
 dx = (x1 - x0) / nCellsX
 dy = (y1 - y0) / nCellsY
@@ -34,7 +35,7 @@ dy = (y1 - y0) / nCellsY
 fig, ax = plt.subplots(1, 1, figsize=(fig_len_x, 6))
 manager = plt.get_current_fig_manager()
 manager.window.wm_geometry("+300+60")
-label_list = ['Density', 'Velocity', 'Pressure']
+label_list = ['Density', 'Velocity', 'Pressure', 'Internal Energy']
 
 
 ## extract files
@@ -59,6 +60,7 @@ def visualize_single(cur_ax, var_id, t, animating = False):
     rho = np.zeros((nCellsY, nCellsX))
     v = np.zeros((nCellsY, nCellsX))
     p = np.zeros((nCellsY, nCellsX))
+    E = np.zeros((nCellsY, nCellsX))
     
     try:
         with open(file_path_1) as file:
@@ -80,10 +82,12 @@ def visualize_single(cur_ax, var_id, t, animating = False):
         row = int(round((nCellsY - 1) - ((y - y0) / dy - 0.5)))
 
         rho[row, col] = cur_rho
-        v[row, col] = pow(pow(cur_vx, 2) + pow(cur_vy, 2), 0.5)
+        cur_v = pow(pow(cur_vx, 2) + pow(cur_vy, 2), 0.5)
+        v[row, col] = cur_v
         p[row, col] = cur_p
+        E[row, col] = cur_p / (gama - 1) / cur_rho
 
-    data_list = [rho, v, p]
+    data_list = [rho, v, p, E]
 
     # Define the actual coordinate values for ticks
     x_ticks = np.linspace(x0, x1, 11).round(1)

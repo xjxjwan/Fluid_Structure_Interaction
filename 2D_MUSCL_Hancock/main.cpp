@@ -23,28 +23,20 @@ namespace fs = std::filesystem;
 int main() {
 
     // parameters
-    double C = 0.8; double tStart = 0.0;
+    double C = 0.4; double tStart = 0.0;
     double gama = 1.4;  // parameter for EoS
     double p_inf = 0.0;  // parameter for the stiffened gas EoS
     double epsilon = 1e-8;  // stop criterion for the pressure iteration in the exact Riemann solver
 
     // parameters that change across experiments
-    int case_id = 2;
+    int case_id = 3;
     int nCellsX = 0, nCellsY = 0;
     std::vector<std::vector<std::array<double, 4>>> u{};  // 4 ghost cells
     double x0 = 0.0, y0 = 0.0, x1 = 0.0, y1 = 0.0;  // simulation range
     double tStop = 0.0;  // simulation time
 
-    // Case 1: Sod test in x-direction
-    if (case_id == 1) {
-        nCellsX = 200, nCellsY = 200;
-        func_resize(u, nCellsX + 4, nCellsY + 4);
-        x0 = 0.0, y0 = 0.0;
-        x1 = 1.0, y1 = 1.0;
-        tStop = 0.25;
-    }
-    // Case 2: Sod test in y-direction
-    if (case_id == 2) {
+    // Case 1 and 2: Sod test in x- and y-direction
+    if (case_id == 1 || case_id == 2) {
         nCellsX = 200, nCellsY = 200;
         func_resize(u, nCellsX + 4, nCellsY + 4);
         x0 = 0.0, y0 = 0.0;
@@ -53,7 +45,7 @@ int main() {
     }
     // Case 3: Cylindrical explosion test
     if (case_id == 3) {
-        nCellsX = 500, nCellsY = 500;
+        nCellsX = 400, nCellsY = 400;
         func_resize(u, nCellsX + 4, nCellsY + 4);
         x0 = 0.0, y0 = 0.0;
         x1 = 2.0, y1 = 2.0;

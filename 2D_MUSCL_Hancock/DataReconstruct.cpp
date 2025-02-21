@@ -6,16 +6,16 @@
 
 double getLimiter(const double& r) {
 
-    // // Minbee
-    // if (r <= 0) {return 0.0;}
-    // if (r > 0 && r <= 1) {return r;}
-    // if (r > 1) {return std::min(1.0, 2.0 / (1 + r));}
+    // Minbee
+    if (r <= 0) {return 0.0;}
+    if (r > 0 && r <= 1) {return r;}
+    if (r > 1) {return std::min(1.0, 2.0 / (1 + r));}
 
-    // Superbee
-    if (r <= 0.0) {return 0.0;}
-    if (r > 0.0 and r <= 0.5) {double res = 2 * r; return res;}
-    if (r > 0.5 and r <= 1.0) {return 1.0;}
-    if (r > 1.0) {double temp = std::min(r, 2.0 / (1 + r)); return std::min(temp, 2.0);}
+    // // Superbee
+    // if (r <= 0.0) {return 0.0;}
+    // if (r > 0.0 and r <= 0.5) {double res = 2 * r; return res;}
+    // if (r > 0.5 and r <= 1.0) {return 1.0;}
+    // if (r > 1.0) {double temp = std::min(r, 2.0 / (1 + r)); return std::min(temp, 2.0);}
 
     return 0;
 }
