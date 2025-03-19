@@ -113,7 +113,7 @@ CMAKE_FIND_PACKAGE_REDIRECTS_DIR:STATIC=D:/Study_Master/WrittenAssignment/WorkSp
 CMAKE_GNUtoMS:BOOL=OFF
 
 //Install path prefix, prepended onto install directories.
-CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/Rigid_Body
+CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/WorkSpace
 
 //Path to a program.
 CMAKE_LINKER:FILEPATH=E:/CLion/CLion 2024.2.2/bin/mingw/bin/ld.exe
@@ -241,15 +241,6 @@ CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 // during the make.  This is useful for debugging only. With Visual
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
-
-//Value Computed by CMake
-Rigid_Body_BINARY_DIR:STATIC=D:/Study_Master/WrittenAssignment/WorkSpace/Rigid_Body/cmake-build-debug
-
-//Value Computed by CMake
-Rigid_Body_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-Rigid_Body_SOURCE_DIR:STATIC=D:/Study_Master/WrittenAssignment/WorkSpace/Rigid_Body
 
 //Value Computed by CMake
 WorkSpace_BINARY_DIR:STATIC=D:/Study_Master/WrittenAssignment/WorkSpace/Rigid_Body/cmake-build-debug

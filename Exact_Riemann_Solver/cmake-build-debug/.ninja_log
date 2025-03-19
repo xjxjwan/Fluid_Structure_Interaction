@@ -1,0 +1,5 @@
+# ninja log v6
+1	175	7641099695159206	build.ninja	5c6e4d902abd8e70
+4	364	7640397259768411	CMakeFiles/WorkSpace.dir/RiemannSolver.cpp.obj	d44c8fb043a648f9
+2	506	7640403969657304	CMakeFiles/WorkSpace.dir/main.cpp.obj	f264975902ac319b
+506	602	7640403974694624	WorkSpace.exe	cd71f4f9f782497b

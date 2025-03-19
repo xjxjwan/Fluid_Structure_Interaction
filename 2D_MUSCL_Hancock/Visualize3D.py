@@ -11,7 +11,7 @@ import os
 
 ## Global Parameters ##
 case_id = 3
-var_id = 2  # var_id: 0-Density, 1-Velocity, 2-Pressure, 3-Energy
+var_id_list = [0, 2]  # var_id: 0-Density, 1-Velocity, 2-Pressure, 3-Energy
 t = 0.25
 gama = 1.4
 
@@ -30,8 +30,7 @@ dy = (y1 - y0) / nCellsY
 
 
 ## visualization preparation
-fig = plt.figure(figsize = (8, 8))
-ax = fig.add_subplot(111, projection='3d')
+fig, axes = plt.subplots(1, 2, figsize=(33, 13), subplot_kw={'projection': '3d'}, gridspec_kw={'wspace': 0.05})
 label_list = ['Density', 'Velocity', 'Pressure', 'Internal Energy']
 
 
@@ -90,9 +89,9 @@ def visualize_single(cur_ax, var_id, t):
     data = data_list[var_id]
     cur_ax.plot_surface(xs, ys, data, cmap='viridis')
         
-    cur_ax.set_zlabel(label_list[var_id])
-    cur_ax.set_xlabel('X')
-    cur_ax.set_ylabel('Y')
+    cur_ax.set_zlabel(label_list[var_id], size=20)
+    cur_ax.set_xlabel('X', size=20)
+    cur_ax.set_ylabel('Y', size=20)
 
     # # change coordinates
     # # Define the actual coordinate values for ticks
@@ -110,11 +109,19 @@ def visualize_single(cur_ax, var_id, t):
     # cur_ax.set_yticklabels(y_ticks)
 
     # plt.savefig("res/Case_%d_%s_T=%.2fs.png" % (case_id, label_list[var_id], t))
-    plt.show()
+    # plt.show()
 
 
 if __name__ == "__main__":
 
     # single plot
-    visualize_single(ax, var_id, t)
+    for i, cur_ax in enumerate(axes.flat):
+        var_id = var_id_list[i]
+        visualize_single(cur_ax, var_id, t)
+
+    plt.savefig("D:/Study_Master/WrittenAssignment/Writing/" + "Figure10_ExplosionTest_3D_Pressure.png", 
+    bbox_inches='tight', pad_inches=0.3)
+    plt.subplots_adjust(left=0.05, right=0.95)
+    # plt.tight_layout()
+    # plt.show()
     

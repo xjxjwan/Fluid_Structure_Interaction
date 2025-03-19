@@ -26,24 +26,31 @@ dy = (y1 - y0) / nCellsY
 
 
 ## visualization preparation
-fig, axes = plt.subplots(1, 4, figsize=(16, 4))
+fig, axes = plt.subplots(1, 4, figsize=(32, 7), dpi=300)
 label_list = ['Density', 'Velocity', 'Pressure', 'Specific Internal Energy']
 
 
 ## extract files
 folder_path = "res/Case_%d/" % case_id
+folder_path_comp = "D:/Study_Master/WrittenAssignment/WorkSpace/Exact_Riemann_Solver/res/"
 
 
 ## visualization function
-def visualize_single(cur_ax, var_id, t, axis, cur_pos):
+def visualize_single(cur_ax, var_id, t, axis, cur_pos, compare):
     
+    if not compare:
+        path = folder_path
+    else:
+        path = folder_path_comp
+        axis = 'X'
+
     # open file
     file_name_1 = "T=%d.txt" % t
-    file_path_1 = os.path.join(folder_path, file_name_1)
+    file_path_1 = os.path.join(path, file_name_1)
     file_name_2 = "T=%.1f.txt" % t
-    file_path_2 = os.path.join(folder_path, file_name_2)
+    file_path_2 = os.path.join(path, file_name_2)
     file_name_3 = "T=%.2f.txt" % t
-    file_path_3 = os.path.join(folder_path, file_name_3)
+    file_path_3 = os.path.join(path, file_name_3)
     
     try:
         with open(file_path_1) as file:
@@ -88,21 +95,25 @@ def visualize_single(cur_ax, var_id, t, axis, cur_pos):
     data_list = [rho, v, p, E]
     
     # visualization
-    cur_ax.cla()
     data = data_list[var_id]
-    cur_ax.scatter(points, data_list[var_id], marker='+', s=20, c='steelblue')
-    cur_ax.set_ylabel(label_list[var_id])
+    if not compare:
+        cur_ax.scatter(points, data_list[var_id], marker='+', s=30, c='steelblue', label='MUSCL-Hancock')
+    else:
+        cur_ax.plot(points, data_list[var_id], c='darkgreen', label='Reference Solution')
+    
+    cur_ax.set_ylabel(label_list[var_id], size=20)
     cur_ax.grid(alpha = 0.2)
+    cur_ax.legend()
 
     # change coordinates
     if axis == 'X':
-        cur_ax.set_xlabel('X')
+        cur_ax.set_xlabel('X', size=20)
         x_ticks = np.linspace(x0, x1, 11).round(1)
         xtick_positions = np.linspace(0, nCellsX, 11)
         cur_ax.set_xticks(xtick_positions)
         cur_ax.set_xticklabels(x_ticks)
     if axis == 'Y':
-        cur_ax.set_xlabel('Y')
+        cur_ax.set_xlabel('Y', size=20)
         y_ticks = np.linspace(y0, y1, 11).round(1)
         ytick_positions = np.linspace(0, nCellsY, 11)
         cur_ax.set_xticks(ytick_positions)
@@ -114,7 +125,11 @@ if __name__ == "__main__":
     # single plot
     for i, ax in enumerate(axes.flat):
         var_id = var_id_list[i]
-        visualize_single(ax, var_id, t, axis, cut_pos)
+        visualize_single(ax, var_id, t, axis, cut_pos, True)
+        visualize_single(ax, var_id, t, axis, cut_pos, False) 
     
+    plt.savefig("D:/Study_Master/WrittenAssignment/Writing_GFM/" + "Figure%d_SodTest%s.png" % (case_id + 5, axis), 
+        bbox_inches='tight', pad_inches=0.1)
+    plt.subplots_adjust(left=0.05, right=0.95)
     plt.tight_layout()
-    plt.show()
+    # plt.show()
