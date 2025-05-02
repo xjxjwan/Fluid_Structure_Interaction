@@ -1,0 +1,18 @@
+# ninja log v6
+21	230	7641106951821353	CMakeFiles/WorkSpace.dir/Initialization.cpp.obj	79b0e4ce2176c117
+13	288	7641106951733180	CMakeFiles/WorkSpace.dir/SetDomainBoundary.cpp.obj	d2234291632d08ec
+25	348	7641106951851350	CMakeFiles/WorkSpace.dir/RigidBodyFunctions.cpp.obj	b3095aabdac3eea5
+10	362	7641106951703180	CMakeFiles/WorkSpace.dir/CalFlux.cpp.obj	82c2ef4a7183eb2f
+5	367	7641106951653184	CMakeFiles/WorkSpace.dir/DataReconstruct.cpp.obj	5c5f8a18a63e2fb9
+4	490	7641106951643180	CMakeFiles/WorkSpace.dir/RiemannSolver.cpp.obj	bc71430c78f2d555
+8	524	7641106951693181	CMakeFiles/WorkSpace.dir/HalfTimeStepUpdate.cpp.obj	6bee866dc2141cde
+11	541	7641106951723180	CMakeFiles/WorkSpace.dir/FastSweeping.cpp.obj	ca8b24367cb743bf
+17	551	7641106951781344	CMakeFiles/WorkSpace.dir/RiemannGFM.cpp.obj	d26c0f9fd668f021
+16	568	7641106951763180	CMakeFiles/WorkSpace.dir/ConstantExtrapolation.cpp.obj	258139c6b94a3e04
+7	585	7641106951673183	CMakeFiles/WorkSpace.dir/CalTimeStep.cpp.obj	701365ff3d582ca8
+14	600	7641106951753181	CMakeFiles/WorkSpace.dir/LevelSetFunctions.cpp.obj	7a6342fc8db78e64
+19	671	7641106951791346	CMakeFiles/WorkSpace.dir/AuxiliaryFunctions.cpp.obj	fb11d19b6dba50c2
+2	1024	7641106951623181	CMakeFiles/WorkSpace.dir/main.cpp.obj	3a1e782876430c2c
+1025	1240	7641106961847077	WorkSpace.exe	860d4389f9ae5ef5
+4	790	7641107102006881	CMakeFiles/WorkSpace.dir/main.cpp.obj	3a1e782876430c2c
+791	997	7641107109880041	WorkSpace.exe	860d4389f9ae5ef5
