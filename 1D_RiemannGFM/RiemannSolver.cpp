@@ -1,7 +1,3 @@
-//
-// Created by Lenovo on 24-10-24.
-//
-
 #include "RiemannSolver.h"
 #include <cmath>
 #include <cassert>

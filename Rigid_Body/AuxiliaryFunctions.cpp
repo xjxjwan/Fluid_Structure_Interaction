@@ -44,13 +44,6 @@ std::array<double, 4> cons2prim(std::array<double, 4> const& u_ij, double gama, 
     res[2] = momy / rho;  // v
     res[3] = (gama - 1) * (E - 0.5 * pow(momx, 2) / rho - 0.5 * pow(momy, 2) / rho) - gama * p_inf;  // p
 
-    // // debug
-    // if (res[3] < 0) {
-    //     std::cout << res[0] << " " << res[1] << " " << res[2] << " " << res[3] << "\n";
-    //     std::cout << (gama - 1) * (E - 0.5 * rho * pow(res[1], 2) - 0.5 * rho * pow(res[2], 2));
-    //     assert(false);
-    // }
-
     return res;
 }
 

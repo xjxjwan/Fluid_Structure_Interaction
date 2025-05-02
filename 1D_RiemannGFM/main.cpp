@@ -68,15 +68,6 @@ double computeTimeStep(const std::vector<std::array<double, 3>>& u1, const std::
         double cur_Cs2 = computeSoundSpeed(u2_prim, gama2, p_inf_2);
         double cur_a1 = cur_v1 + cur_Cs1;
         double cur_a2 = cur_v2 + cur_Cs2;
-
-        // // debug
-        // if (std::isinf(cur_a)) {
-        //     std::cout << u[i][0] << " " << u[i][1] << " " << u[i][2] << std::endl;
-        //     std::cout << u_prim[0] << " " << u_prim[1] << " " << u_prim[2] << std::endl;
-        //     std::cout << cur_v << " " << cur_Cs << std::endl;
-        //     assert(false);
-        // }
-
         a_list.push_back(cur_a1);
         a_list.push_back(cur_a2);
     }
@@ -84,14 +75,6 @@ double computeTimeStep(const std::vector<std::array<double, 3>>& u1, const std::
     // for stability: numerical dependence stencil should contain the largest wave speed
     const auto max_iter = std::max_element(a_list.begin(), a_list.end());
     const double timeStep = C * dx / *max_iter;
-
-    // // debug
-    // if (timeStep == 0) {
-    //     for (int i = 1; i < a_list.size() - 1; i++) {std::cout << a_list[i] << std::endl;}
-    //     std::cout << C << " " << dx << " " << *max_iter << std::endl;
-    //     assert(false);
-    // }
-
     return timeStep;
 }
 
@@ -174,7 +157,6 @@ std::vector<std::array<double, 3>> halfTimeStepUpdate(std::array<double, 3> cons
     const double& dx, const double& dt, const double& gama) {
 
     // variable substitution
-    // 注意这里L,R指的是当前小格的左右边界
     const double& rhoL = uBarL[0], momL = uBarL[1], EL = uBarL[2];
     const double& rhoR = uBarR[0], momR = uBarR[1], ER = uBarR[2];
     std::array<double, 3> uBarL_prim = cons2prim(uBarL, gama);
@@ -230,19 +212,6 @@ std::array<double, 3> getFlux(std::array<double, 3> const& u_i, std::array<doubl
 
     // FORCE scheme
     const std::array F_FORCE = {0.5 * (F_LF[0] + F_RI[0]), 0.5 * (F_LF[1] + F_RI[1]), 0.5 * (F_LF[2] + F_RI[2])};
-
-    // // debug
-    // if (std::isnan(F_FORCE[0])) {
-    //     std::cout << u_i[0] << " " << u_i[1] << " " << u_i[2] << std::endl;
-    //     std::cout << u_i1[0] << " " << u_i1[1] << " " << u_i1[2] << std::endl;
-    //     std::cout << v_i << " " << v_i1 << std::endl;
-    //     std::cout << p_i << " " << p_i1 << std::endl;
-    //     std::cout << dx << " " << dt << std::endl;
-    //     std::cout << F_rho_LF << " " << F_mom_LF << " " << F_E_LF << std::endl;
-    //     std::cout << F_FORCE[0] << " " << F_FORCE[1] << " " << F_FORCE[2] << std::endl;
-    //     std::cout << "--------------" << std::endl;
-    // }
-
     return F_FORCE;
 }
 
@@ -254,9 +223,6 @@ int main() {
     double x0 = 0.0;
     double x1 = 1.0;
     double tStart = 0.0;
-    // double a = 1.0;
-    // double pi = 3.141592653589793;
-    // double e = 2.71828182845;
 
     double C = 0.8;
     double gama1 = 1.4, gama2 = 1.67;
@@ -491,7 +457,7 @@ int main() {
 
         // record result
         std::ostringstream oss;
-        oss << "D:/Study_Master/FSM/Practical Workspace/Practical_6/res/case_" << case_id << "/ite=" << counter << ".txt";
+        oss << "res/case_" << case_id << "/ite=" << counter << ".txt";
         std::string fileName = oss.str();
         std::fstream outFile(fileName, std::ios::out);
         for (int i = 2; i < u1.size() - 2; i++) {

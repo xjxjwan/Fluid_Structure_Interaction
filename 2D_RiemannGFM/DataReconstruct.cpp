@@ -52,10 +52,6 @@ std::vector<std::array<double, 4>> dataReconstruct(std::array<double, 4> const& 
     std::array<double, 2> momyBar = singleVarReconstruct(momy_i0, momy_i, momy_i1);
     std::array<double, 2> EBar = singleVarReconstruct(E_i0, E_i, E_i1);
 
-    // // debug
-    // if (rhoBar[0] == 0) {assert(false);}
-    // if (rhoBar[1] == 0) {assert(false);}
-
     std::array<double, 4> uBarBackward = {rhoBar[0], momxBar[0], momyBar[0], EBar[0]};
     std::array<double, 4> uBarForward = {rhoBar[1], momxBar[1], momyBar[1], EBar[1]};
 

@@ -48,13 +48,6 @@ std::array<double, 4> cons2prim(std::array<double, 4> const& u_ij, const double 
     res[2] = momy / rho;  // v
     res[3] = (gama - 1) * (E - 0.5 * pow(momx, 2) / rho - 0.5 * pow(momy, 2) / rho);  // p
 
-    // // debug
-    // if (res[3] < 0) {
-    //     std::cout << res[0] << " " << res[1] << " " << res[2] << " " << res[3] << "\n";
-    //     std::cout << (gama - 1) * (E - 0.5 * rho * pow(res[1], 2) - 0.5 * rho * pow(res[2], 2));
-    //     assert(false);
-    // }
-
     return res;
 }
 
@@ -73,14 +66,6 @@ double computeTimeStep(const std::vector<std::vector<std::array<double, 4>>>& u,
             double cur_Cs = pow(gama * u_prim[3] / u_prim[0], 0.5);  // p and rho cannot be negative
             double cur_a = vel + cur_Cs;
 
-            // // debug
-            // if (std::isnan(cur_a)) {
-            //     std::cout << u[i][j][0] << " " << u[i][j][1] << " " << u[i][j][2] << " " << u[i][j][3] << std::endl;
-            //     std::cout << u_prim[3] << " " << u_prim[0] << std::endl;
-            //     std::cout << vel << " " << cur_Cs << std::endl;
-            //     assert(false);
-            // }
-
             a_list.push_back(cur_a);  // the largest eigenvalue (wave speed)
         }
     }
@@ -88,13 +73,6 @@ double computeTimeStep(const std::vector<std::vector<std::array<double, 4>>>& u,
     // for stability: numerical dependence stencil should contain the largest wave speed
     const auto max_iter = std::max_element(a_list.begin(), a_list.end());
     const double timeStep = C * std::min(dx, dy) / *max_iter;
-
-    // // debug
-    // if (std::isnan(timeStep)) {
-    //     for (int i = 1; i < a_list.size() - 1; i++) {std::cout << a_list[i] << std::endl;}
-    //     std::cout << C << " " << dx << " " << *max_iter << std::endl;
-    //     assert(false);
-    // }
 
     return timeStep;
 }
@@ -146,10 +124,6 @@ std::vector<std::array<double, 4>> dataReconstruct(std::array<double, 4> const& 
     std::array<double, 2> momyBar = singleVarReconstruct(momy_i0, momy_i, momy_i1);
     std::array<double, 2> EBar = singleVarReconstruct(E_i0, E_i, E_i1);
 
-    // // debug
-    // if (rhoBar[0] == 0) {assert(false);}
-    // if (rhoBar[1] == 0) {assert(false);}
-
     std::array<double, 4> uBarBackward = {rhoBar[0], momxBar[0], momyBar[0], EBar[0]};
     std::array<double, 4> uBarForward = {rhoBar[1], momxBar[1], momyBar[1], EBar[1]};
 
@@ -164,7 +138,6 @@ std::vector<std::array<double, 4>> halfTimeStepUpdateX(std::array<double, 4> con
     const double& dx, const double& dt, const double& gama) {
 
     // variable substitution
-    // 注意这里L,R指的是当前小格的左右边界
     const double& rhoL = uBarL[0], momxL = uBarL[1], momyL = uBarL[2], EL = uBarL[3];
     const double& rhoR = uBarR[0], momxR = uBarR[1], momyR = uBarR[2], ER = uBarR[3];
     std::array<double, 4> uBarL_prim = cons2prim(uBarL, gama);
@@ -176,7 +149,7 @@ std::vector<std::array<double, 4>> halfTimeStepUpdateX(std::array<double, 4> con
     // flux functions used
     double rho_update = 0.5 * (dt / dx) * (momxR - momxL);
     double momx_update = 0.5 * (dt / dx) * (rhoR * pow(vxR, 2) + pR - rhoL * pow(vxL, 2) - pL);
-    double momy_update = 0.5 * (dt / dx) * ((rhoR * vyR) * vxR - (rhoL * vyL) * vxL);  // 在x方向上更新应当只与vx有关，这里有vy是因为y方向上的动量本身就有vy
+    double momy_update = 0.5 * (dt / dx) * ((rhoR * vyR) * vxR - (rhoL * vyL) * vxL);
     double E_update = 0.5 * (dt / dx) * ((ER + pR) * vxR - (EL + pL) * vxL);
 
     double rhoBarLUpdate = rhoL - rho_update, rhoBarRUpdate = rhoR - rho_update;
@@ -186,17 +159,6 @@ std::vector<std::array<double, 4>> halfTimeStepUpdateX(std::array<double, 4> con
 
     std::array<double, 4> uBarLUpdate = {rhoBarLUpdate, momxBarLUpdate, momyBarLUpdate, EBarLUpdate};
     std::array<double, 4> uBarRUpdate = {rhoBarRUpdate, momxBarRUpdate, momyBarRUpdate, EBarRUpdate};
-
-    // // debug
-    // for (int i = 0; i < uBarLUpdate.size(); i++) {
-    //     if (std::isnan(uBarLUpdate[i])) {
-    //         std::cout << i << std::endl;
-    //         std::cout << momx_update << std::endl;
-    //         std::cout << momy_update << std::endl;
-    //         std::cout << rhoR << " " << rhoL << " " << vxR << " " << vxR << " " << pR << " " << pL << std::endl;
-    //         assert(false);
-    //     }
-    // }
 
     std::vector<std::array<double, 4>> res{};
     res.push_back(uBarLUpdate);
@@ -209,7 +171,6 @@ std::vector<std::array<double, 4>> halfTimeStepUpdateY(std::array<double, 4> con
     const double& dy, const double& dt, const double& gama) {
 
     // variable substitution
-    // 注意这里D, U指的是当前小格的下、上边界
     const double& rhoD = uBarD[0], momxD = uBarD[1], momyD = uBarD[2], ED = uBarD[3];
     const double& rhoU = uBarU[0], momxU = uBarU[1], momyU = uBarU[2], EU = uBarU[3];
     std::array<double, 4> uBarD_prim = cons2prim(uBarD, gama);
@@ -324,23 +285,19 @@ std::array<double, 4> getFluxY(std::array<double, 4> const& u_i, std::array<doub
 void setBoundaryCondition(std::vector<std::vector<std::array<double, 4>>>& u, const int& nCells) {
 
     // transmissive boundary condition
-    // 左边界
     for (int i = 2; i < nCells + 2; ++i) {
         u[i][0] = u[i][2];
         u[i][1] = u[i][2];
     }
-    // 右边界
     for (int i = 2; i < nCells + 2; ++i) {
         u[i][nCells + 2] = u[i][nCells + 1];
         u[i][nCells + 3] = u[i][nCells + 1];
     }
-    // 上边界
-    for (int j = 0; j < nCells + 4; ++j) {  // 包括ghost cells
+    for (int j = 0; j < nCells + 4; ++j) {
         u[0][j] = u[2][j];
         u[1][j] = u[2][j];
     }
-    // 下边界
-    for (int j = 0; j < nCells + 4; ++j) {  // 包括ghost cells
+    for (int j = 0; j < nCells + 4; ++j) {
         u[nCells + 2][j] = u[nCells + 1][j];
         u[nCells + 3][j] = u[nCells + 1][j];
     }
@@ -450,20 +407,9 @@ int main() {
         setBoundaryCondition(uBarL, nCells);
         setBoundaryCondition(uBarR, nCells);
 
-        // // debug
-        // bool judgeL = std::isnan(uBarL[0][0][0]);
-        // bool judgeR = std::isnan(uBarR[0][0][0]);
-
         // half-time-step update in x-direction
         for (int i = 0; i < nCells + 4; i++) {
             for (int j = 0; j < nCells + 4; j++) {
-
-                // // debug
-                // if (uBarL[i][j][0] == 0.0) {
-                //     std::cout << i << '\t' << j << '\t' << uBarL[i][j][0] << std::endl;
-                //     assert(false);
-                // }
-
                 // update x-direction
                 std::vector<std::array<double, 4>> uBarUpdateX_ij = halfTimeStepUpdateX(uBarL[i][j], uBarR[i][j], dx, dt, gama);
                 uBarLUpdate[i][j] = uBarUpdateX_ij[0];
@@ -471,12 +417,7 @@ int main() {
             }
         }
 
-        // // debug
-        // if (judgeL != std::isnan(uBarLUpdate[0][0][0])) {assert(false);}
-        // if (judgeR != std::isnan(uBarRUpdate[0][0][0])) {assert(false);}
-
         // calculate boundary fluxes in x-direction
-        // flux_i对应的是u_i的右边界
         for (int i = 0; i < nCells + 3; i++) {
             for (int j = 0; j < nCells + 3; j++) {
                 fluxX_SLIC[i][j] = getFluxX(uBarRUpdate[i][j], uBarLUpdate[i + 1][j], dx, dt, gama);
@@ -557,7 +498,7 @@ int main() {
 
     // check whether the directory exists, create one if not
     std::ostringstream folderPath;
-    folderPath << "D:/Study_Master/WrittenAssignment/WorkSpace/2D_SLIC_FORCE/res/Case_" << case_id;
+    folderPath << "res/Case_" << case_id;
     std::string caseFolder = folderPath.str();
     if (!fs::exists(caseFolder)) {
         fs::create_directories(caseFolder);

@@ -53,34 +53,6 @@ std::vector<std::array<double, 2>> getRigidState(const int case_id, const double
         v_rigid[1] = std::cos(cur_ang) * ang_vel * track_radius;
         rigid_center[0] = track_center[0] + std::cos(cur_ang) * track_radius;
         rigid_center[1] = track_center[1] + std::sin(cur_ang) * track_radius;
-
-        // // piecewise constant velocity
-        // const double t1 = 0.25 * tStop, t2 = 0.5 * tStop, t3 = 0.75 * tStop, t4 = tStop;
-        // std::array v_1 = {(point_2[0] - point_1[0]) / t1, (point_2[1] - point_1[1]) / t1};
-        // std::array v_2 = {(point_3[0] - point_2[0]) / (t2 - t1), (point_3[1] - point_2[1]) / (t2 - t1)};
-        // std::array v_3 = {(point_4[0] - point_3[0]) / (t3 - t2), (point_4[1] - point_3[1]) / (t3 - t2)};
-        // std::array v_4 = {(point_1[0] - point_4[0]) / (t4 - t3), (point_1[1] - point_4[1]) / (t4 - t3)};
-        //
-        // if (0 <= t && t <= t1) {
-        //     rigid_center[0] = point_1[0] + v_1[0] * t;
-        //     rigid_center[1] = point_1[1] + v_1[1] * t;
-        //     v_rigid = v_1;
-        // }
-        // if (t1 < t && t <= t2) {
-        //     rigid_center[0] = point_2[0] + v_2[0] * (t - t1);
-        //     rigid_center[1] = point_2[1] + v_2[1] * (t - t1);
-        //     v_rigid = v_2;
-        // }
-        // if (t2 < t && t <= t3) {
-        //     rigid_center[0] = point_3[0] + v_3[0] * (t - t2);
-        //     rigid_center[1] = point_3[1] + v_3[1] * (t - t2);
-        //     v_rigid = v_3;
-        // }
-        // if (t3 < t && t <= t4) {
-        //     rigid_center[0] = point_4[0] + v_4[0] * (t - t3);
-        //     rigid_center[1] = point_4[1] + v_4[1] * (t - t3);
-        //     v_rigid = v_4;
-        // }
     }
 
     std::vector res = {rigid_center, v_rigid};

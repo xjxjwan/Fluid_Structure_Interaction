@@ -45,7 +45,6 @@ int main() {
         for (int j = 2; j < nCells + 2; j++) {
 
             // get coordinates
-            // NOTE: x对应i，y对应j，而且都是正相关
             const double x = x0 + (i - 1.5) * dx;
             const double y = y0 + (j - 1.5) * dx;
             std::array<double, 4> u_ij{};
@@ -121,7 +120,6 @@ int main() {
                 }
             }
         }
-        // if (!found) {assert(false);}  // debug: no interface
 
 
         //**********************************************************************************//
@@ -139,19 +137,11 @@ int main() {
                 if (interface_location[i][j] == 1 && phi[i][j] > 0) {  // ghost cells adjacent to the interface
                     std::array temp_u1_prim = func_solveRiemannProblem(u1, u2, phi, i, j, dx, dy, x0, y0, gama_1, gama_2, p_inf_1, p_inf_2, epsilon);
                     u1[i][j] = prim2cons(temp_u1_prim, gama_1, p_inf_1);
-                    // if (std::isnan(u1[i][j][0]) || std::isnan(u1[i][j][1]) || std::isnan(u1[i][j][2]) || std::isnan(u1[i][j][3])) {
-                    //     std::cout << temp_u1_prim[0] << " " << temp_u1_prim[1] << " " << temp_u1_prim[2] << " " << temp_u1_prim[3] << std::endl;
-                    //     assert(false);
-                    // }
                 }
                 // right material (phi > 0)
                 if (interface_location[i][j] == 1 && phi[i][j] < 0) {  // ghost cells adjacent to the interface
                     std::array temp_u2_prim = func_solveRiemannProblem(u1, u2, phi, i, j, dx, dy, x0, y0, gama_1, gama_2, p_inf_1, p_inf_2, epsilon);
                     u2[i][j] = prim2cons(temp_u2_prim, gama_2, p_inf_2);
-                    // if (std::isnan(u1[i][j][0]) || std::isnan(u1[i][j][1]) || std::isnan(u1[i][j][2]) || std::isnan(u1[i][j][3])) {
-                    //     std::cout << temp_u2_prim[0] << " " << temp_u2_prim[1] << " " << temp_u2_prim[2] << " " << temp_u2_prim[3] << std::endl;
-                    //     assert(false);
-                    // }
                 }
             }
         }
@@ -232,7 +222,6 @@ int main() {
 
 
         // calculate boundary fluxes in x-direction
-        // flux_i对应的是u_i的右边界
         for (int i = 0; i < nCells + 3; i++) {
             for (int j = 0; j < nCells + 3; j++) {
                 flux1X_SLIC[i][j] = getFluxX(u1BarRUpdate[i][j], u1BarLUpdate[i + 1][j], dx, dt, gama_1, p_inf_1);
@@ -290,7 +279,6 @@ int main() {
         }
 
         // calculate boundary fluxes in y-direction
-        // flux_i对应的是u_i的右边界
         for (int i = 0; i < nCells + 3; i++) {
             for (int j = 0; j < nCells + 3; j++) {
                 flux1Y_SLIC[i][j] = getFluxY(u1BarUUpdate[i][j], u1BarDUpdate[i][j + 1], dy, dt, gama_1, p_inf_1);
@@ -332,7 +320,7 @@ int main() {
 
         // data recording
         std::ostringstream oss;
-        oss << "D:/Study_Master/WrittenAssignment/WorkSpace/res/case_" << case_id << "/ite=" << counter << ".txt";
+        oss << "res/case_" << case_id << "/ite=" << counter << ".txt";
         std::string fileName = oss.str();
         std::fstream outFile(fileName, std::ios::out);
         for (int i = 2; i < nCells + 2; i++) {

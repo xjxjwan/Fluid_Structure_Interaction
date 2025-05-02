@@ -41,7 +41,7 @@ int main() {
 
     // check whether the directory exists, create one if not
     std::ostringstream folderPath;
-    folderPath << "D:/Study_Master/WrittenAssignment/WorkSpace/Exact_Riemann_Solver/res";
+    folderPath << "res";
     std::string caseFolder = folderPath.str();
     if (!fs::exists(caseFolder)) {
         fs::create_directories(caseFolder);

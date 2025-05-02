@@ -28,20 +28,6 @@ void constantExtrapolation(std::vector<std::vector<std::array<double, 4>>>& u,
     sweep2(u, phi, interface_location, nCellsX, nCellsY, dx, dy);
     sweep3(u, phi, interface_location, nCellsX, nCellsY, dx, dy);
     sweep4(u, phi, interface_location, nCellsX, nCellsY, dx, dy);
-
-    // check
-    for (int i = 2; i < nCellsX + 2; i++) {
-        for (int j = 2; j < nCellsY + 2; j++) {
-            // not adjacent to the interface and in the ghost region
-            if (interface_location[i][j] == 0 && phi[i][j] < 0) {
-                if (std::abs(u[i][j][0]) >= huge || std::abs(u[i][j][1]) >= huge || std::abs(u[i][j][2]) >= huge || std::abs(u[i][j][3]) >= huge) {
-                    std::cout << i << " " << j << std::endl;
-                    std::cout << u[i][j][0] << " " << u[i][j][1] << " " << u[i][j][2] << " " << u[i][j][3] << std::endl;
-                    assert(false);
-                }
-            }
-        }
-    }
 }
 
 
@@ -51,15 +37,6 @@ void updateU(std::vector<std::vector<std::array<double, 4>>>& u, const std::vect
     const std::array cur_u = u[i][j];
     const std::vector<double> normal_vector = func_calNormalVector(phi, i, j, dx, dy);
     double n_x = normal_vector[0], n_y = normal_vector[1];
-
-    // if (std::abs(n_y) < 1.25 * dy) {
-    //     n_x = n_x / std::abs(n_x);
-    //     n_y = 0;
-    // }
-    // if (std::abs(n_x) < 1.25 * dx) {
-    //     n_x = 0;
-    //     n_y = n_y / std::abs(n_y);
-    // }
 
     double coeff_x = std::abs(n_x) / dx;
     double coeff_y = std::abs(n_y) / dy;
