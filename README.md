@@ -9,5 +9,3 @@ Structure:
 5. Exact_Riemann_Solver: 1D exact solver for Riemann Problem.
 6. Rigid_Body: 2D Riemann problem-based GFM-like method for simulating fluid interaction with rigid body.
 
-In each folder, the 'res' folder contains simulation results, including simulation data and figures. Report is attached above.
-
